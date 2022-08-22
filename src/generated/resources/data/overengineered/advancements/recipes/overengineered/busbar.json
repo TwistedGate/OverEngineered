@@ -1,0 +1,60 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "overengineered:busbar"
+    ]
+  },
+  "criteria": {
+    "has_copper_ingot": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:copper_ingot"
+            ]
+          }
+        ]
+      }
+    },
+    "has_connector_lv_relay": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "immersiveengineering:connector_lv_relay"
+            ]
+          }
+        ]
+      }
+    },
+    "has_connector_mv_relay": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "immersiveengineering:connector_mv_relay"
+            ]
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "overengineered:busbar"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_copper_ingot",
+      "has_connector_lv_relay",
+      "has_connector_mv_relay",
+      "has_the_recipe"
+    ]
+  ]
+}

@@ -44,8 +44,14 @@ public class OERegisters{
 		MOB_EFFECT.register(eventBus);
 	}
 	
-	protected static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> blockConstructor){
+	/** Registers a {@link Block} without a {@link BlockItem} */
+	protected static <T extends Block> RegistryObject<T> registerSimpleBlock(String name, Supplier<T> blockConstructor){
 		return registerBlock(name, blockConstructor, null);
+	}
+	
+	/** Registers a {@link Block} with a {@link BlockItem} being automaticly added to {@link OverEngineered#creativeTab} */
+	protected static <T extends Block> RegistryObject<T> registerTabbedBlock(String name, Supplier<T> blockConstructor, Item.Properties properties){
+		return registerBlock(name, blockConstructor, b -> new BlockItem(b, properties.tab(OverEngineered.creativeTab)));
 	}
 	
 	protected static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> blockConstructor, @Nullable Function<T, ? extends BlockItem> blockItem){
