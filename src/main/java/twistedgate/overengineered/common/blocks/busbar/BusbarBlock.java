@@ -40,9 +40,7 @@ public class BusbarBlock extends OEBlockBase implements EntityBlock{
 	public BusbarBlock(){
 		super(Block.Properties.of(MATERIAL).strength(2.0F, 10.0F).sound(SoundType.METAL).requiresCorrectToolForDrops());
 		
-		registerDefaultState(getStateDefinition().any()
-			.setValue(SHAPE, EnumBusbarShape.INSULATORS_DOWN_NORTH_SOUTH)
-		);
+		registerDefaultState(getStateDefinition().any().setValue(SHAPE, EnumBusbarShape.INSULATORS_DOWN_NORTH_SOUTH));
 	}
 	
 	@Override
@@ -55,12 +53,24 @@ public class BusbarBlock extends OEBlockBase implements EntityBlock{
 		return true;
 	}
 	
-	public static boolean isBusbar(Level level, BlockPos pos){
-		return isBusbar(level.getBlockState(pos));
-	}
-	
-	public static boolean isBusbar(BlockState state){
-		return state.getBlock() instanceof BusbarBlock;
+	@Override
+	public BlockState getStateForPlacement(BlockPlaceContext pContext){
+		Direction direction = pContext.getHorizontalDirection();
+		Direction face = pContext.getClickedFace();
+		
+		// @formatter:off
+		EnumBusbarShape shape = switch(face){
+			case DOWN -> (direction == Direction.EAST || direction == Direction.WEST) ? EnumBusbarShape.INSULATORS_UP_EAST_WEST : EnumBusbarShape.INSULATORS_UP_NORTH_SOUTH;
+			case UP -> (direction == Direction.EAST || direction == Direction.WEST) ? EnumBusbarShape.INSULATORS_DOWN_EAST_WEST : EnumBusbarShape.INSULATORS_DOWN_NORTH_SOUTH;
+			case NORTH -> EnumBusbarShape.INSULATORS_SOUTH_UP_DOWN;
+			case EAST -> EnumBusbarShape.INSULATORS_WEST_UP_DOWN;
+			case SOUTH -> EnumBusbarShape.INSULATORS_NORTH_UP_DOWN;
+			case WEST -> EnumBusbarShape.INSULATORS_EAST_UP_DOWN;
+			default -> EnumBusbarShape.INSULATORS_DOWN_NORTH_SOUTH;
+		};
+		// @formatter:on
+		
+		return defaultBlockState().setValue(SHAPE, shape);
 	}
 	
 	@Override
@@ -88,24 +98,6 @@ public class BusbarBlock extends OEBlockBase implements EntityBlock{
 	}
 	
 	@Override
-	public BlockState getStateForPlacement(BlockPlaceContext pContext){
-		Direction direction = pContext.getHorizontalDirection();
-		Direction face = pContext.getClickedFace();
-		
-		EnumBusbarShape shape = switch(face){
-			case DOWN -> (direction == Direction.EAST || direction == Direction.WEST) ? EnumBusbarShape.INSULATORS_UP_EAST_WEST : EnumBusbarShape.INSULATORS_UP_NORTH_SOUTH;
-			case UP -> (direction == Direction.EAST || direction == Direction.WEST) ? EnumBusbarShape.INSULATORS_DOWN_EAST_WEST : EnumBusbarShape.INSULATORS_DOWN_NORTH_SOUTH;
-			case NORTH -> EnumBusbarShape.INSULATORS_SOUTH_UP_DOWN;
-			case EAST -> EnumBusbarShape.INSULATORS_WEST_UP_DOWN;
-			case SOUTH -> EnumBusbarShape.INSULATORS_NORTH_UP_DOWN;
-			case WEST -> EnumBusbarShape.INSULATORS_EAST_UP_DOWN;
-			default -> EnumBusbarShape.INSULATORS_DOWN_NORTH_SOUTH;
-		};
-		
-		return defaultBlockState().setValue(SHAPE, shape);
-	}
-	
-	@Override
 	public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack){
 	}
 	
@@ -117,12 +109,12 @@ public class BusbarBlock extends OEBlockBase implements EntityBlock{
 	private BlockState updateDir(Level level, BlockPos pos, BlockState state, boolean placing){
 		if(level.isClientSide){
 			return state;
-		}else{
-			EnumBusbarShape shape = state.getValue(SHAPE);
-			return new BusbarState(level, pos, state).place(placing, shape).getState();
 		}
+		
+		EnumBusbarShape shape = state.getValue(SHAPE);
+		return new BusbarState(level, pos, state).place(placing, shape).getState();
 	}
-
+	
 	@Override
 	public void neighborChanged(BlockState stateIn, Level levelIn, BlockPos posIn, Block lastBlockIn, BlockPos fromPosIn, boolean isMovingIn){
 	}
@@ -177,5 +169,13 @@ public class BusbarBlock extends OEBlockBase implements EntityBlock{
 			}
 		}
 		// @formatter:on
+	}
+	
+	public static boolean isBusbar(Level level, BlockPos pos){
+		return isBusbar(level.getBlockState(pos));
+	}
+	
+	public static boolean isBusbar(BlockState state){
+		return state.getBlock() instanceof BusbarBlock;
 	}
 }
