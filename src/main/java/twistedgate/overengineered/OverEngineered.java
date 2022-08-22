@@ -9,7 +9,6 @@ import org.apache.logging.log4j.Logger;
 
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
@@ -27,8 +26,9 @@ import twistedgate.overengineered.client.ClientProxy;
 import twistedgate.overengineered.common.CommonProxy;
 import twistedgate.overengineered.common.OEContent;
 import twistedgate.overengineered.common.OERegisters;
+import twistedgate.overengineered.common.OETileTypes;
+import twistedgate.overengineered.utils.ExternalModContent;
 
-// The value here should match an entry in the META-INF/mods.toml file
 @Mod(OverEngineered.MODID)
 public class OverEngineered{
 	public static final String MODID = "overengineered";
@@ -39,8 +39,7 @@ public class OverEngineered{
 		@Override
 		@Nonnull
 		public ItemStack makeIcon(){
-			// TODO
-			return new ItemStack(Items.BARRIER);
+			return new ItemStack(OEContent.Blocks.BUSBAR.get());
 		}
 	};
 	
@@ -74,6 +73,9 @@ public class OverEngineered{
 		IEventBus eBus = FMLJavaModLoadingContext.get().getModEventBus();
 		OERegisters.addRegistersToEventBus(eBus);
 		
+		OEContent.populate();
+		OETileTypes.forceClassLoad();
+		
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 	
@@ -83,9 +85,12 @@ public class OverEngineered{
 		proxy.preInit();
 		
 		OEContent.init(event);
+		
 		proxy.init();
 		
 		proxy.postInit();
+		
+		ExternalModContent.init();
 	}
 	
 	public void loadComplete(FMLLoadCompleteEvent event){
