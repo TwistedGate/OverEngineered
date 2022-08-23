@@ -103,7 +103,16 @@ public class BusbarBlock extends OEBlockBase implements EntityBlock{
 	
 	@Override
 	public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving){
-		state = updateDir(level, pos, state, true);
+		if(!oldState.is(state.getBlock())){
+			state = updateDir(level, pos, state, true);
+		}
+	}
+	
+	@Override
+	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block lastBlock, BlockPos fromPos, boolean isMoving){
+		if(!level.isClientSide && level.getBlockState(pos).is(this)){
+			state = updateDir(level, pos, state, false);
+		}
 	}
 	
 	private BlockState updateDir(Level level, BlockPos pos, BlockState state, boolean placing){
@@ -113,10 +122,6 @@ public class BusbarBlock extends OEBlockBase implements EntityBlock{
 		
 		EnumBusbarShape shape = state.getValue(SHAPE);
 		return new BusbarState(level, pos, state).place(placing, shape).getState();
-	}
-	
-	@Override
-	public void neighborChanged(BlockState stateIn, Level levelIn, BlockPos posIn, Block lastBlockIn, BlockPos fromPosIn, boolean isMovingIn){
 	}
 	
 	@Override

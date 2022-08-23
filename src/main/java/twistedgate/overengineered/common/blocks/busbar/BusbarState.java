@@ -23,7 +23,7 @@ public class BusbarState{
 		
 		EnumBusbarShape shape = this.state.getValue(BusbarBlock.SHAPE);
 		
-		this.isStraight = !EnumBusbarShape.Type.STRAIGHT_SEGMENTS.contains(shape);
+		this.isStraight = false;//!EnumBusbarShape.Type.STRAIGHT_SEGMENTS.contains(shape);
 		
 		updateConnections(shape);
 	}
