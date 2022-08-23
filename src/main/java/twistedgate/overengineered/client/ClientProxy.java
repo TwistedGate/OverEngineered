@@ -28,7 +28,7 @@ public class ClientProxy extends CommonProxy{
 	
 	@Override
 	public void completed(ParallelDispatchEvent event){
-		// TODO Soon™
+		// TODO Soonâ„¢
 		//setupManualPages();
 	}
 	
