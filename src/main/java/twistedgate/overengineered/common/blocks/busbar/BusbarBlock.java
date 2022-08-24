@@ -57,15 +57,16 @@ public class BusbarBlock extends OEBlockBase implements EntityBlock{
 	public BlockState getStateForPlacement(BlockPlaceContext pContext){
 		Direction direction = pContext.getHorizontalDirection();
 		Direction face = pContext.getClickedFace();
+		boolean crouching = pContext.getPlayer() != null ? pContext.getPlayer().isCrouching() : false;
 		
 		// @formatter:off
 		EnumBusbarShape shape = switch(face){
-			case DOWN -> (direction == Direction.EAST || direction == Direction.WEST) ? EnumBusbarShape.INSULATORS_UP_EAST_WEST : EnumBusbarShape.INSULATORS_UP_NORTH_SOUTH;
-			case UP -> (direction == Direction.EAST || direction == Direction.WEST) ? EnumBusbarShape.INSULATORS_DOWN_EAST_WEST : EnumBusbarShape.INSULATORS_DOWN_NORTH_SOUTH;
-			case NORTH -> EnumBusbarShape.INSULATORS_SOUTH_UP_DOWN;
-			case EAST -> EnumBusbarShape.INSULATORS_WEST_UP_DOWN;
-			case SOUTH -> EnumBusbarShape.INSULATORS_NORTH_UP_DOWN;
-			case WEST -> EnumBusbarShape.INSULATORS_EAST_UP_DOWN;
+			case DOWN -> (direction == Direction.EAST || direction == Direction.WEST) != crouching ? EnumBusbarShape.INSULATORS_UP_EAST_WEST : EnumBusbarShape.INSULATORS_UP_NORTH_SOUTH;
+			case UP -> (direction == Direction.EAST || direction == Direction.WEST) != crouching ? EnumBusbarShape.INSULATORS_DOWN_EAST_WEST : EnumBusbarShape.INSULATORS_DOWN_NORTH_SOUTH;
+			case NORTH -> crouching ? EnumBusbarShape.INSULATORS_SOUTH_EAST_WEST : EnumBusbarShape.INSULATORS_SOUTH_UP_DOWN;
+			case EAST -> crouching ? EnumBusbarShape.INSULATORS_WEST_NORTH_SOUTH : EnumBusbarShape.INSULATORS_WEST_UP_DOWN;
+			case SOUTH -> crouching ? EnumBusbarShape.INSULATORS_NORTH_EAST_WEST : EnumBusbarShape.INSULATORS_NORTH_UP_DOWN;
+			case WEST -> crouching ? EnumBusbarShape.INSULATORS_EAST_NORTH_SOUTH : EnumBusbarShape.INSULATORS_EAST_UP_DOWN;
 			default -> EnumBusbarShape.INSULATORS_DOWN_NORTH_SOUTH;
 		};
 		// @formatter:on
