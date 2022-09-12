@@ -22,7 +22,7 @@ public class ExternalModContent{
 	}
 	
 	public static boolean isIEScrewdriver(ItemStack stack){
-		return isIEHammer(stack.getItem());
+		return isIEScrewdriver(stack.getItem());
 	}
 	
 	public static boolean isIEScrewdriver(Item item){
@@ -30,7 +30,7 @@ public class ExternalModContent{
 	}
 	
 	public static boolean isIEWirecutter(ItemStack stack){
-		return isIEHammer(stack.getItem());
+		return isIEWirecutter(stack.getItem());
 	}
 	
 	public static boolean isIEWirecutter(Item item){
