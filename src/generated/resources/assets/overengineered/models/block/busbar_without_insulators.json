@@ -1,9 +1,0 @@
-{
-  "textures": {
-    "texture": "overengineered:block/obj/busbar",
-    "particle": "overengineered:block/obj/busbar"
-  },
-  "loader": "forge:obj",
-  "model": "overengineered:models/block/obj/busbar/busbar_b.obj",
-  "flip-v": true
-}

@@ -21,101 +21,90 @@ import net.minecraft.util.StringRepresentable;
 public enum EnumBusbarShape implements StringRepresentable{
 	// @formatter:off
 	// Straights with Insulators (FACING_FROM_TO)
-	INSULATORS_DOWN_NORTH_SOUTH(ConnectionsPoints.NORTH_SOUTH),
-	INSULATORS_DOWN_EAST_WEST(ConnectionsPoints.EAST_WEST),
-	INSULATORS_UP_NORTH_SOUTH(ConnectionsPoints.NORTH_SOUTH),
-	INSULATORS_UP_EAST_WEST(ConnectionsPoints.EAST_WEST),
+	INSULATORS_DOWN_NORTH_SOUTH(Direction.DOWN, Connections.NORTH_SOUTH),
+	INSULATORS_DOWN_EAST_WEST(Direction.DOWN, Connections.EAST_WEST),
+	INSULATORS_UP_NORTH_SOUTH(Direction.UP, Connections.NORTH_SOUTH),
+	INSULATORS_UP_EAST_WEST(Direction.UP, Connections.EAST_WEST),
 	
-	INSULATORS_NORTH_UP_DOWN(ConnectionsPoints.UP_DOWN),
-	INSULATORS_EAST_UP_DOWN(ConnectionsPoints.UP_DOWN),
-	INSULATORS_SOUTH_UP_DOWN(ConnectionsPoints.UP_DOWN),
-	INSULATORS_WEST_UP_DOWN(ConnectionsPoints.UP_DOWN),
-	INSULATORS_NORTH_EAST_WEST(ConnectionsPoints.EAST_WEST),
-	INSULATORS_EAST_NORTH_SOUTH(ConnectionsPoints.NORTH_SOUTH),
-	INSULATORS_SOUTH_EAST_WEST(ConnectionsPoints.EAST_WEST),
-	INSULATORS_WEST_NORTH_SOUTH(ConnectionsPoints.NORTH_SOUTH),
-	
-	// Straights without Insulators (FACING_FROM_TO)
-	FLOATING_DOWN_NORTH_SOUTH(ConnectionsPoints.NORTH_SOUTH),
-	FLOATING_DOWN_EAST_WEST(ConnectionsPoints.EAST_WEST),
-	FLOATING_UP_NORTH_SOUTH(ConnectionsPoints.NORTH_SOUTH),
-	FLOATING_UP_EAST_WEST(ConnectionsPoints.EAST_WEST),
-	
-	FLOATING_NORTH_UP_DOWN(ConnectionsPoints.UP_DOWN),
-	FLOATING_EAST_UP_DOWN(ConnectionsPoints.UP_DOWN),
-	FLOATING_SOUTH_UP_DOWN(ConnectionsPoints.UP_DOWN),
-	FLOATING_WEST_UP_DOWN(ConnectionsPoints.UP_DOWN),
-	FLOATING_NORTH_EAST_WEST(ConnectionsPoints.EAST_WEST),
-	FLOATING_EAST_NORTH_SOUTH(ConnectionsPoints.NORTH_SOUTH),
-	FLOATING_SOUTH_EAST_WEST(ConnectionsPoints.EAST_WEST),
-	FLOATING_WEST_NORTH_SOUTH(ConnectionsPoints.NORTH_SOUTH),
+	INSULATORS_NORTH_UP_DOWN(Direction.NORTH, Connections.UP_DOWN),
+	INSULATORS_EAST_UP_DOWN(Direction.EAST, Connections.UP_DOWN),
+	INSULATORS_SOUTH_UP_DOWN(Direction.SOUTH, Connections.UP_DOWN),
+	INSULATORS_WEST_UP_DOWN(Direction.WEST, Connections.UP_DOWN),
+	INSULATORS_NORTH_EAST_WEST(Direction.NORTH, Connections.EAST_WEST),
+	INSULATORS_EAST_NORTH_SOUTH(Direction.EAST, Connections.NORTH_SOUTH),
+	INSULATORS_SOUTH_EAST_WEST(Direction.SOUTH, Connections.EAST_WEST),
+	INSULATORS_WEST_NORTH_SOUTH(Direction.WEST, Connections.NORTH_SOUTH),
 	
 	// 90° Bends (FACING_FROM_TO)
-	BEND_DOWN_NORTH_EAST(ConnectionsPoints.NORTH_EAST),
-	BEND_DOWN_EAST_SOUTH(ConnectionsPoints.EAST_SOUTH),
-	BEND_DOWN_SOUTH_WEST(ConnectionsPoints.SOUTH_WEST),
-	BEND_DOWN_WEST_NORTH(ConnectionsPoints.WEST_NORTH),
+	BEND_DOWN_NORTH_EAST(Direction.DOWN, Connections.NORTH_EAST),
+	BEND_DOWN_EAST_SOUTH(Direction.DOWN, Connections.EAST_SOUTH),
+	BEND_DOWN_SOUTH_WEST(Direction.DOWN, Connections.SOUTH_WEST),
+	BEND_DOWN_WEST_NORTH(Direction.DOWN, Connections.WEST_NORTH),
 	
-	BEND_UP_NORTH_EAST(ConnectionsPoints.NORTH_EAST),
-	BEND_UP_EAST_SOUTH(ConnectionsPoints.EAST_SOUTH),
-	BEND_UP_SOUTH_WEST(ConnectionsPoints.SOUTH_WEST),
-	BEND_UP_WEST_NORTH(ConnectionsPoints.WEST_NORTH),
+	BEND_UP_NORTH_EAST(Direction.UP, Connections.NORTH_EAST),
+	BEND_UP_EAST_SOUTH(Direction.UP, Connections.EAST_SOUTH),
+	BEND_UP_SOUTH_WEST(Direction.UP, Connections.SOUTH_WEST),
+	BEND_UP_WEST_NORTH(Direction.UP, Connections.WEST_NORTH),
 	
-	BEND_NORTH_DOWN_EAST(ConnectionsPoints.DOWN_EAST),
-	BEND_NORTH_EAST_UP(ConnectionsPoints.UP_EAST),
-	BEND_NORTH_UP_WEST(ConnectionsPoints.UP_WEST),
-	BEND_NORTH_WEST_DOWN(ConnectionsPoints.DOWN_WEST),
+	BEND_NORTH_DOWN_EAST(Direction.NORTH, Connections.DOWN_EAST),
+	BEND_NORTH_EAST_UP(Direction.NORTH, Connections.UP_EAST),
+	BEND_NORTH_UP_WEST(Direction.NORTH, Connections.UP_WEST),
+	BEND_NORTH_WEST_DOWN(Direction.NORTH, Connections.DOWN_WEST),
 	
-	BEND_EAST_DOWN_SOUTH(ConnectionsPoints.DOWN_SOUTH),
-	BEND_EAST_SOUTH_UP(ConnectionsPoints.UP_SOUTH),
-	BEND_EAST_UP_NORTH(ConnectionsPoints.UP_NORTH),
-	BEND_EAST_NORTH_DOWN(ConnectionsPoints.DOWN_NORTH),
+	BEND_EAST_DOWN_SOUTH(Direction.EAST, Connections.DOWN_SOUTH),
+	BEND_EAST_SOUTH_UP(Direction.EAST, Connections.UP_SOUTH),
+	BEND_EAST_UP_NORTH(Direction.EAST, Connections.UP_NORTH),
+	BEND_EAST_NORTH_DOWN(Direction.EAST, Connections.DOWN_NORTH),
 	
-	BEND_SOUTH_DOWN_WEST(ConnectionsPoints.DOWN_WEST),
-	BEND_SOUTH_WEST_UP(ConnectionsPoints.UP_WEST),
-	BEND_SOUTH_UP_EAST(ConnectionsPoints.UP_EAST),
-	BEND_SOUTH_EAST_DOWN(ConnectionsPoints.DOWN_EAST),
+	BEND_SOUTH_DOWN_WEST(Direction.SOUTH, Connections.DOWN_WEST),
+	BEND_SOUTH_WEST_UP(Direction.SOUTH, Connections.UP_WEST),
+	BEND_SOUTH_UP_EAST(Direction.SOUTH, Connections.UP_EAST),
+	BEND_SOUTH_EAST_DOWN(Direction.SOUTH, Connections.DOWN_EAST),
 	
-	BEND_WEST_DOWN_NORTH(ConnectionsPoints.DOWN_NORTH),
-	BEND_WEST_NORTH_UP(ConnectionsPoints.UP_NORTH),
-	BEND_WEST_UP_SOUTH(ConnectionsPoints.UP_SOUTH),
-	BEND_WEST_SOUTH_DOWN(ConnectionsPoints.DOWN_SOUTH),
+	BEND_WEST_DOWN_NORTH(Direction.WEST, Connections.DOWN_NORTH),
+	BEND_WEST_NORTH_UP(Direction.WEST, Connections.UP_NORTH),
+	BEND_WEST_UP_SOUTH(Direction.WEST, Connections.UP_SOUTH),
+	BEND_WEST_SOUTH_DOWN(Direction.WEST, Connections.DOWN_SOUTH),
 	
-	// Inside Edges (SIDE_FACING_FROM_TO)
-	EDGE_INSIDE_DOWN_NORTH_UP_SOUTH(ConnectionsPoints.UP_SOUTH),
-	EDGE_INSIDE_DOWN_EAST_UP_WEST(ConnectionsPoints.UP_WEST),
-	EDGE_INSIDE_DOWN_SOUTH_UP_NORTH(ConnectionsPoints.UP_NORTH),
-	EDGE_INSIDE_DOWN_WEST_UP_EAST(ConnectionsPoints.UP_EAST),
-	EDGE_INSIDE_UP_NORTH_DOWN_SOUTH(ConnectionsPoints.DOWN_SOUTH),
-	EDGE_INSIDE_UP_EAST_DOWN_WEST(ConnectionsPoints.DOWN_WEST),
-	EDGE_INSIDE_UP_SOUTH_DOWN_NORTH(ConnectionsPoints.DOWN_NORTH),
-	EDGE_INSIDE_UP_WEST_DOWN_EAST(ConnectionsPoints.DOWN_EAST),
+	// Inside Edges (FACING_SIDE_FROM_TO)
+	EDGE_INSIDE_DOWN_NORTH_UP_SOUTH	(Direction.DOWN, Connections.UP_SOUTH),
+	EDGE_INSIDE_DOWN_EAST_UP_WEST	(Direction.DOWN, Connections.UP_WEST),
+	EDGE_INSIDE_DOWN_SOUTH_UP_NORTH	(Direction.DOWN, Connections.UP_NORTH),
+	EDGE_INSIDE_DOWN_WEST_UP_EAST	(Direction.DOWN, Connections.UP_EAST),
+	EDGE_INSIDE_UP_NORTH_DOWN_SOUTH	(Direction.UP, Connections.DOWN_SOUTH),
+	EDGE_INSIDE_UP_EAST_DOWN_WEST	(Direction.UP, Connections.DOWN_WEST),
+	EDGE_INSIDE_UP_SOUTH_DOWN_NORTH	(Direction.UP, Connections.DOWN_NORTH),
+	EDGE_INSIDE_UP_WEST_DOWN_EAST	(Direction.UP, Connections.DOWN_EAST),
 	
-	// Outside Edges (SIDE_FACING_FROM_TO)
-	EDGE_OUTSIDE_DOWN_NORTH_UP_SOUTH(ConnectionsPoints.UP_SOUTH),
-	EDGE_OUTSIDE_DOWN_EAST_UP_WEST(ConnectionsPoints.UP_WEST),
-	EDGE_OUTSIDE_DOWN_SOUTH_UP_NORTH(ConnectionsPoints.UP_NORTH),
-	EDGE_OUTSIDE_DOWN_WEST_UP_EAST(ConnectionsPoints.UP_EAST),
-	EDGE_OUTSIDE_UP_NORTH_DOWN_SOUTH(ConnectionsPoints.DOWN_SOUTH),
-	EDGE_OUTSIDE_UP_EAST_DOWN_WEST(ConnectionsPoints.DOWN_WEST),
-	EDGE_OUTSIDE_UP_SOUTH_DOWN_NORTH(ConnectionsPoints.DOWN_NORTH),
-	EDGE_OUTSIDE_UP_WEST_DOWN_EAST(ConnectionsPoints.DOWN_EAST),
+	// Outside Edges (FACING_SIDE_FROM_TO)
+	EDGE_OUTSIDE_DOWN_NORTH_UP_SOUTH(Direction.DOWN, Connections.UP_SOUTH),
+	EDGE_OUTSIDE_DOWN_EAST_UP_WEST	(Direction.DOWN, Connections.UP_WEST),
+	EDGE_OUTSIDE_DOWN_SOUTH_UP_NORTH(Direction.DOWN, Connections.UP_NORTH),
+	EDGE_OUTSIDE_DOWN_WEST_UP_EAST	(Direction.DOWN, Connections.UP_EAST),
+	EDGE_OUTSIDE_UP_NORTH_DOWN_SOUTH(Direction.UP, Connections.DOWN_SOUTH),
+	EDGE_OUTSIDE_UP_EAST_DOWN_WEST	(Direction.UP, Connections.DOWN_WEST),
+	EDGE_OUTSIDE_UP_SOUTH_DOWN_NORTH(Direction.UP, Connections.DOWN_NORTH),
+	EDGE_OUTSIDE_UP_WEST_DOWN_EAST	(Direction.UP, Connections.DOWN_EAST),
 	;
 	// @formatter:on
 	
 	private final String serialname;
-	private final Direction[] points;
-	private EnumBusbarShape(Direction... points){
+	public final Direction facing;
+	public final Connections connections;
+	private EnumBusbarShape(Direction facing, Connections cons){
 		this.serialname = name().toLowerCase();
-		this.points = points;
+		this.facing = facing;
+		this.connections = cons;
 	}
-	private EnumBusbarShape(String name, Direction... points){
+	
+	private EnumBusbarShape(String name, Direction facing, Connections cons){
 		this.serialname = name;
-		this.points = points;
+		this.facing = facing;
+		this.connections = cons;
 	}
 	
 	public void connectionOffsets(final List<BlockPos> list, BlockPos pos){
-		for(Direction p:this.points){
+		for(Direction p:this.connections.points){
 			list.add(pos.relative(p));
 		}
 	}
@@ -125,25 +114,39 @@ public enum EnumBusbarShape implements StringRepresentable{
 		return this.serialname;
 	}
 	
-	public static class ConnectionsPoints{
-		private static final Direction[] NORTH_SOUTH = {Direction.NORTH, Direction.SOUTH};
-		private static final Direction[] EAST_WEST = {Direction.EAST, Direction.WEST};
-		private static final Direction[] UP_DOWN = {Direction.UP, Direction.DOWN};
+	public boolean compatibleWith(EnumBusbarShape other){
+		return this.connections.compatibleWith(other.connections);
+	}
+	
+	public static enum Connections{
+		NORTH_SOUTH(Direction.NORTH, Direction.SOUTH),
+		EAST_WEST(Direction.EAST, Direction.WEST),
+		UP_DOWN(Direction.UP, Direction.DOWN),
 		
-		private static final Direction[] NORTH_EAST = {Direction.NORTH, Direction.EAST};
-		private static final Direction[] EAST_SOUTH = {Direction.EAST, Direction.SOUTH};
-		private static final Direction[] SOUTH_WEST = {Direction.SOUTH, Direction.WEST};
-		private static final Direction[] WEST_NORTH = {Direction.WEST, Direction.NORTH};
+		NORTH_EAST(Direction.NORTH, Direction.EAST),
+		EAST_SOUTH(Direction.EAST, Direction.SOUTH),
+		SOUTH_WEST(Direction.SOUTH, Direction.WEST),
+		WEST_NORTH(Direction.WEST, Direction.NORTH),
 		
-		private static final Direction[] UP_NORTH = {Direction.UP, Direction.NORTH};
-		private static final Direction[] UP_EAST = {Direction.UP, Direction.EAST};
-		private static final Direction[] UP_SOUTH = {Direction.UP, Direction.SOUTH};
-		private static final Direction[] UP_WEST = {Direction.UP, Direction.WEST};
+		UP_NORTH(Direction.UP, Direction.NORTH),
+		UP_EAST(Direction.UP, Direction.EAST),
+		UP_SOUTH(Direction.UP, Direction.SOUTH),
+		UP_WEST(Direction.UP, Direction.WEST),
 		
-		private static final Direction[] DOWN_NORTH = {Direction.DOWN, Direction.NORTH};
-		private static final Direction[] DOWN_EAST = {Direction.DOWN, Direction.EAST};
-		private static final Direction[] DOWN_SOUTH = {Direction.DOWN, Direction.SOUTH};
-		private static final Direction[] DOWN_WEST = {Direction.DOWN, Direction.WEST};
+		DOWN_NORTH(Direction.DOWN, Direction.NORTH),
+		DOWN_EAST(Direction.DOWN, Direction.EAST),
+		DOWN_SOUTH(Direction.DOWN, Direction.SOUTH),
+		DOWN_WEST(Direction.DOWN, Direction.WEST)
+		;
+		
+		final Direction[] points;
+		private Connections(Direction... points){
+			this.points = points;
+		}
+		
+		public boolean compatibleWith(Connections other){
+			return this.points[0] == other.points[1] || this.points[1] == other.points[0];
+		}
 	}
 	
 	public static enum Type implements Iterable<EnumBusbarShape>{
@@ -161,21 +164,6 @@ public enum EnumBusbarShape implements StringRepresentable{
 			INSULATORS_EAST_NORTH_SOUTH,
 			INSULATORS_SOUTH_EAST_WEST,
 			INSULATORS_WEST_NORTH_SOUTH
-		),
-		
-		STRAIGHT_FLOATING_FLOOR(FLOATING_DOWN_NORTH_SOUTH, FLOATING_DOWN_EAST_WEST),
-		STRAIGHT_FLOATING_CEILING(FLOATING_UP_NORTH_SOUTH, FLOATING_UP_EAST_WEST),
-		STRAIGHT_FLOATING_WALL_NORMAL(
-			FLOATING_NORTH_UP_DOWN,
-			FLOATING_EAST_UP_DOWN,
-			FLOATING_SOUTH_UP_DOWN,
-			FLOATING_WEST_UP_DOWN
-		),
-		STRAIGHT_FLOATING_WALL_ROTATED(
-			FLOATING_NORTH_EAST_WEST,
-			FLOATING_EAST_NORTH_SOUTH,
-			FLOATING_SOUTH_EAST_WEST,
-			FLOATING_WEST_NORTH_SOUTH
 		),
 		
 		BENDS_FLOOR(
@@ -238,11 +226,6 @@ public enum EnumBusbarShape implements StringRepresentable{
 				list.addAll(Arrays.asList(STRAIGHT_INSULATORS_CEILING.shapes));
 				list.addAll(Arrays.asList(STRAIGHT_INSULATORS_WALL_NORMAL.shapes));
 				list.addAll(Arrays.asList(STRAIGHT_INSULATORS_WALL_ROTATED.shapes));
-				
-				list.addAll(Arrays.asList(STRAIGHT_FLOATING_FLOOR.shapes));
-				list.addAll(Arrays.asList(STRAIGHT_FLOATING_CEILING.shapes));
-				list.addAll(Arrays.asList(STRAIGHT_FLOATING_WALL_NORMAL.shapes));
-				list.addAll(Arrays.asList(STRAIGHT_FLOATING_WALL_ROTATED.shapes));
 				
 				STRAIGHT_SEGMENTS = Collections.unmodifiableSet(list);
 			}
