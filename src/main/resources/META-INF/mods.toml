@@ -28,7 +28,7 @@ Random bits and bobs, here and there. Possibly containing QoL things.
 [[dependencies.overengineered]]
 	modId="forge"
 	mandatory=true
-	versionRange="[40.1.25,)"
+	versionRange="[40.1.48,)"
 	ordering="NONE"
 	side="BOTH"
 
