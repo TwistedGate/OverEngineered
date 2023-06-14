@@ -21,7 +21,7 @@ Random bits and bobs, here and there. Possibly containing QoL things.
 [[dependencies.overengineered]]
 	modId="immersiveengineering"
 	mandatory=true
-	versionRange="[1.18.2-8.0.2-149,)"
+	versionRange="[1.18.2-8.4.0-161,)"
 	ordering="BEFORE"
 	side="BOTH"
 
