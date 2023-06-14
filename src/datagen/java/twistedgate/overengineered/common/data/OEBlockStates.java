@@ -36,19 +36,12 @@ public class OEBlockStates extends BlockStateProvider{
 		BlockModelBuilder model_insulators_normal = busModel("models/block/obj/busbar/busbar_a.obj", "_with_insulators");
 		BlockModelBuilder model_insulators_rotated = busModel("models/block/obj/busbar/busbar_a_alt.obj", "_with_insulators_pre_y_rotated");
 		
-		// Floating
-		BlockModelBuilder model_floating_normal = busModel("models/block/obj/busbar/busbar_b.obj", "_without_insulators");
-		BlockModelBuilder model_floating_rotated = busModel("models/block/obj/busbar/busbar_b_alt.obj", "_without_insulators_pre_y_rotated");
-		
 		BlockModelBuilder model_bend = busModel("models/block/obj/busbar/busbar_bend.obj", "_bend");
 		BlockModelBuilder model_edge_inside = busModel("models/block/obj/busbar/busbar_edge_inside.obj", "_horizontal_up");
 		BlockModelBuilder model_edge_outside = busModel("models/block/obj/busbar/busbar_edge_outside.obj", "_horizontal_down");
 		
 		model_insulators_normal.assertExistence();
 		model_insulators_rotated.assertExistence();
-		
-		model_floating_normal.assertExistence();
-		model_floating_rotated.assertExistence();
 		
 		model_bend.assertExistence();
 		model_edge_inside.assertExistence();
@@ -59,16 +52,8 @@ public class OEBlockStates extends BlockStateProvider{
 		bus(EnumBusbarShape.INSULATORS_UP_NORTH_SOUTH, model_insulators_normal, 180, 0);
 		bus(EnumBusbarShape.INSULATORS_UP_EAST_WEST, model_insulators_normal, 180, 90);
 		
-		bus(EnumBusbarShape.FLOATING_DOWN_NORTH_SOUTH, model_floating_normal, 0, 0);
-		bus(EnumBusbarShape.FLOATING_DOWN_EAST_WEST, model_floating_normal, 0, 90);
-		bus(EnumBusbarShape.FLOATING_UP_NORTH_SOUTH, model_floating_normal, 180, 0);
-		bus(EnumBusbarShape.FLOATING_UP_EAST_WEST, model_floating_normal, 180, 90);
-		
 		EnumBusbarShape.Type.STRAIGHT_INSULATORS_WALL_NORMAL.forEachIndexed((i, shape) -> bus(shape, model_insulators_normal, -90, 90 * i));
 		EnumBusbarShape.Type.STRAIGHT_INSULATORS_WALL_ROTATED.forEachIndexed((i, shape) -> bus(shape, model_insulators_rotated, -90, 90 * i));
-		
-		EnumBusbarShape.Type.STRAIGHT_FLOATING_WALL_NORMAL.forEachIndexed((i, shape) -> bus(shape, model_floating_normal, -90, 90 * i));
-		EnumBusbarShape.Type.STRAIGHT_FLOATING_WALL_ROTATED.forEachIndexed((i, shape) -> bus(shape, model_floating_rotated, -90, 90 * i));
 		
 		EnumBusbarShape.Type.BENDS_FLOOR.forEachIndexed((i, shape) -> bus(shape, model_bend, 0, 90 + 90 * i));
 		EnumBusbarShape.Type.BENDS_CEILING.forEachIndexed((i, shape) -> bus(shape, model_bend, 180, 180 + 90 * i));

@@ -10,6 +10,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import twistedgate.overengineered.utils.enums.EnumBusbarShape;
 
+/**
+ * Old broken attempt
+ * 
+ * @author TwistedGate
+ */
 public class BusbarState{
 	private final List<BlockPos> connections = new ArrayList<>();
 	private final Level level;
@@ -224,11 +229,11 @@ public class BusbarState{
 	
 	private void removeSoftConnections(){
 		for(int i = 0;i < this.connections.size();i++){
-			BusbarState busState = getBus(this.connections.get(i));
-			if(busState != null && busState.connectsTo(this)){
-				this.connections.set(i, busState.pos);
-			}else{
+			BusbarState bus = getBus(this.connections.get(i));
+			if(bus != null && bus.connectsTo(this)){
 				this.connections.remove(i--);
+			}else{
+				this.connections.set(i, bus.pos);
 			}
 		}
 	}

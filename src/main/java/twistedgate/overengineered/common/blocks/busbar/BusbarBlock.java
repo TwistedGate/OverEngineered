@@ -1,11 +1,15 @@
 package twistedgate.overengineered.common.blocks.busbar;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
+
+import com.mojang.math.Vector3f;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -27,6 +31,7 @@ import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -59,13 +64,13 @@ public class BusbarBlock extends OEBlockBase implements EntityBlock{
 	}
 	
 	@Override
-	public BlockState getStateForPlacement(BlockPlaceContext pContext){
-		Direction direction = pContext.getHorizontalDirection();
-		Direction face = pContext.getClickedFace();
-		boolean crouching = pContext.getPlayer() != null ? pContext.getPlayer().isCrouching() : false;
+	public BlockState getStateForPlacement(BlockPlaceContext context){
+		Direction facing = context.getClickedFace();
+		Direction direction = context.getHorizontalDirection();
+		boolean crouching = context.getPlayer() != null ? context.getPlayer().isCrouching() : false;
 		
 		// @formatter:off
-		EnumBusbarShape shape = switch(face){
+		EnumBusbarShape shape = switch(facing){
 			case DOWN -> (direction == Direction.EAST || direction == Direction.WEST) != crouching ? EnumBusbarShape.INSULATORS_UP_EAST_WEST : EnumBusbarShape.INSULATORS_UP_NORTH_SOUTH;
 			case UP -> (direction == Direction.EAST || direction == Direction.WEST) != crouching ? EnumBusbarShape.INSULATORS_DOWN_EAST_WEST : EnumBusbarShape.INSULATORS_DOWN_NORTH_SOUTH;
 			case NORTH -> crouching ? EnumBusbarShape.INSULATORS_SOUTH_EAST_WEST : EnumBusbarShape.INSULATORS_SOUTH_UP_DOWN;
@@ -76,32 +81,83 @@ public class BusbarBlock extends OEBlockBase implements EntityBlock{
 		};
 		// @formatter:on
 		
-		return defaultBlockState().setValue(SHAPE, shape);
+		return this.defaultBlockState().setValue(SHAPE, shape);
 	}
 	
 	@Override
 	public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit){
-		if(ExternalModContent.isIEHammer(pPlayer.getItemInHand(pHand))){
-			EnumBusbarShape shape = pState.getValue(SHAPE);
-			if(EnumBusbarShape.Type.STRAIGHT_SEGMENTS.contains(shape)){
-				EnumBusbarShape newShape = null;
-				
-				// @formatter:off
-				if(shape == EnumBusbarShape.INSULATORS_DOWN_NORTH_SOUTH)newShape = EnumBusbarShape.FLOATING_DOWN_NORTH_SOUTH;
-				if(shape == EnumBusbarShape.FLOATING_DOWN_NORTH_SOUTH)	newShape = EnumBusbarShape.INSULATORS_DOWN_NORTH_SOUTH;
-				if(shape == EnumBusbarShape.INSULATORS_DOWN_EAST_WEST)	newShape = EnumBusbarShape.FLOATING_DOWN_EAST_WEST;
-				if(shape == EnumBusbarShape.FLOATING_DOWN_EAST_WEST)	newShape = EnumBusbarShape.INSULATORS_DOWN_EAST_WEST;
-				// @formatter:on
-				
-				if(newShape != null && newShape != shape){
-					pLevel.setBlock(pPos, pState.setValue(SHAPE, newShape), 3);
-					return InteractionResult.SUCCESS;
+		ItemStack held = pPlayer.getItemInHand(InteractionHand.MAIN_HAND);
+		
+		if(ExternalModContent.isIEHammer(held)){
+			BlockPos lastPos = null;
+			BlockPos currentPos = pPos;
+			
+			retLabel:for(int i = 0;i < 32;i++){
+				BlockState state = pLevel.getBlockState(currentPos);
+				if(state.getBlock() == this){
+					EnumBusbarShape shape = state.getValue(SHAPE);
+					
+					List<BlockPos> list = new ArrayList<>();
+					shape.connectionOffsets(list, currentPos);
+					
+					for(BlockPos p:list){
+						if((lastPos == null || p != lastPos) && isBusbar(pLevel, p)){
+							if(p == pPos) break retLabel;
+							lastPos = currentPos;
+							currentPos = p;
+							break;
+						}
+					}
 				}
 			}
+
+			DustParticleOptions src = new DustParticleOptions(new Vector3f(Vec3.fromRGB24(0xFF0000)), 1.0F);
+			DustParticleOptions dst = new DustParticleOptions(new Vector3f(Vec3.fromRGB24(0x00FF00)), 1.0F);
+
+			pLevel.addParticle(src, pPos.getX() + .5, pPos.getY() + .5, pPos.getZ() + .5, 0.0, 0.0, 0.0);
+			pLevel.addParticle(dst, currentPos.getX() + .5, currentPos.getY() + .5, currentPos.getZ() + .5, 0.0, 0.0, 0.0);
+			OverEngineered.log.info("End appears to be at {}", currentPos);
+			
+			return InteractionResult.SUCCESS;
 		}
 		
-		if(pPlayer.getItemInHand(pHand).isEmpty()){
-			re_set_shapes = true;
+		if(ExternalModContent.isIEScrewdriver(held)){
+			final BusbarCon bus = BusbarCon.create(pLevel, pPos, pState);
+			if(bus != null){
+				bus.removeExistingConnections();
+				OverEngineered.log.info("connections: {}", bus.freePoints.size());
+				
+				DustParticleOptions dust = new DustParticleOptions(new Vector3f(Vec3.fromRGB24(0x00FF00)), 1.0F);
+				for(BlockPos p:bus.freePoints){
+					pLevel.addParticle(dust, p.getX() + .5, p.getY() + .5, p.getZ() + .5, 0.0, 0.0, 0.0);
+				}
+			}
+			
+			return InteractionResult.SUCCESS;
+		}
+		
+		if(held.isEmpty()){
+			EnumBusbarShape shape = pState.getValue(SHAPE);
+			
+			List<BlockPos> connections;
+			{
+				List<BlockPos> list = new ArrayList<>();
+				shape.connectionOffsets(list, pPos);
+				for(int i = 0;i < list.size();i++){
+					BlockState state = pLevel.getBlockState(list.get(i));
+					if(state.getBlock() != this){
+						list.remove(i--);
+					}
+				}
+				connections = list;
+			}
+			
+			DustParticleOptions dust = new DustParticleOptions(new Vector3f(Vec3.fromRGB24(0x0000FF)), 1.0F);
+			for(int i = 0;i < connections.size();i++){
+				BlockPos currentPos = connections.get(i);
+				pLevel.addParticle(dust, currentPos.getX() + .5, currentPos.getY() + .5, currentPos.getZ() + .5, 0.0, 0.0, 0.0);
+			}
+			
 			return InteractionResult.SUCCESS;
 		}
 		
@@ -115,17 +171,24 @@ public class BusbarBlock extends OEBlockBase implements EntityBlock{
 	@Override
 	public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving){
 		if(!oldState.is(state.getBlock())){
-			state = updateDir(level, pos, state, true);
+			final BusbarCon bus = BusbarCon.create(level, pos, state);
+			if(bus != null){
+				bus.onPlace(true);
+			}
+			
+//			state = updateDir(level, pos, state, true);
 		}
 	}
 	
 	@Override
 	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block lastBlock, BlockPos fromPos, boolean isMoving){
 		if(!level.isClientSide && level.getBlockState(pos).is(this)){
-			state = updateDir(level, pos, state, false);
+//			state = updateDir(level, pos, state, false);
 		}
 	}
 	
+	@Deprecated
+	@SuppressWarnings("unused")
 	private BlockState updateDir(Level level, BlockPos pos, BlockState state, boolean placing){
 		if(level.isClientSide){
 			return state;
@@ -147,22 +210,10 @@ public class BusbarBlock extends OEBlockBase implements EntityBlock{
 	}
 	
 	static final VoxelShape MISSING_SHAPE = Shapes.create(0.125, 0.125, 0.125, 0.875, 0.875, 0.875);
-	static Map<EnumBusbarShape, VoxelShape> SHAPES_CACHE = makeShapeCache();
-	
-	/**
-	 * @deprecated // TODO To be removed once the Shapes are properly set up
-	 */
-	@Deprecated(forRemoval = true)
-	static boolean re_set_shapes = false;
+	static final Map<EnumBusbarShape, VoxelShape> SHAPES_CACHE = makeShapeCache();
 	
 	@Override
 	public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext){
-		if(re_set_shapes){
-			SHAPES_CACHE = makeShapeCache();
-			re_set_shapes = false;
-			OverEngineered.log.info("Shapes Re-set.");
-		}
-		
 		return SHAPES_CACHE.getOrDefault(pState.getValue(SHAPE), MISSING_SHAPE);
 	}
 	
@@ -172,20 +223,20 @@ public class BusbarBlock extends OEBlockBase implements EntityBlock{
 			
 			// @formatter:off
 			VoxelShape vShape = switch(shape){
-				case INSULATORS_DOWN_NORTH_SOUTH, FLOATING_DOWN_NORTH_SOUTH -> Shapes.create(0.125, 0.0, 0.0, 0.875, 0.25, 1.0);
-				case INSULATORS_DOWN_EAST_WEST, FLOATING_DOWN_EAST_WEST -> Shapes.create(0.0, 0.0, 0.125, 1.0, 0.25, 0.875);
-				case INSULATORS_UP_NORTH_SOUTH, FLOATING_UP_NORTH_SOUTH -> Shapes.create(0.125, 0.75, 0.0, 0.875, 1.0, 1.0);
-				case INSULATORS_UP_EAST_WEST, FLOATING_UP_EAST_WEST -> Shapes.create(0.0, 0.75, 0.125, 1.0, 1.0, 0.875);
+				case INSULATORS_DOWN_NORTH_SOUTH -> Shapes.create(0.125, 0.0, 0.0, 0.875, 0.25, 1.0);
+				case INSULATORS_DOWN_EAST_WEST -> Shapes.create(0.0, 0.0, 0.125, 1.0, 0.25, 0.875);
+				case INSULATORS_UP_NORTH_SOUTH -> Shapes.create(0.125, 0.75, 0.0, 0.875, 1.0, 1.0);
+				case INSULATORS_UP_EAST_WEST -> Shapes.create(0.0, 0.75, 0.125, 1.0, 1.0, 0.875);
 				
-				case INSULATORS_NORTH_UP_DOWN, FLOATING_NORTH_UP_DOWN -> Shapes.create(0.125, 0.0, 0.0, 0.875, 1.0, 0.25);
-				case INSULATORS_EAST_UP_DOWN, FLOATING_EAST_UP_DOWN -> Shapes.create(0.75, 0.0, 0.125, 1.0, 1.0, 0.875);
-				case INSULATORS_SOUTH_UP_DOWN, FLOATING_SOUTH_UP_DOWN -> Shapes.create(0.125, 0.0, 0.75, 0.875, 1.0, 1.0);
-				case INSULATORS_WEST_UP_DOWN, FLOATING_WEST_UP_DOWN -> Shapes.create(0.0, 0.0, 0.125, 0.25, 1.0, 0.875);
+				case INSULATORS_NORTH_UP_DOWN -> Shapes.create(0.125, 0.0, 0.0, 0.875, 1.0, 0.25);
+				case INSULATORS_EAST_UP_DOWN -> Shapes.create(0.75, 0.0, 0.125, 1.0, 1.0, 0.875);
+				case INSULATORS_SOUTH_UP_DOWN -> Shapes.create(0.125, 0.0, 0.75, 0.875, 1.0, 1.0);
+				case INSULATORS_WEST_UP_DOWN -> Shapes.create(0.0, 0.0, 0.125, 0.25, 1.0, 0.875);
 				
-				case INSULATORS_NORTH_EAST_WEST, FLOATING_NORTH_EAST_WEST -> Shapes.create(0.0, 0.125, 0.0, 1.0, 0.875, 0.25);
-				case INSULATORS_SOUTH_EAST_WEST, FLOATING_SOUTH_EAST_WEST -> Shapes.create(0.0, 0.125, 0.75, 1.0, 0.875, 1.0);
-				case INSULATORS_EAST_NORTH_SOUTH, FLOATING_EAST_NORTH_SOUTH -> Shapes.create(0.75, 0.125, 0.0, 1.0, 0.875, 1.0);
-				case INSULATORS_WEST_NORTH_SOUTH, FLOATING_WEST_NORTH_SOUTH -> Shapes.create(0.0, 0.125, 0.0, 0.25, 0.875, 1.0);
+				case INSULATORS_NORTH_EAST_WEST -> Shapes.create(0.0, 0.125, 0.0, 1.0, 0.875, 0.25);
+				case INSULATORS_SOUTH_EAST_WEST -> Shapes.create(0.0, 0.125, 0.75, 1.0, 0.875, 1.0);
+				case INSULATORS_EAST_NORTH_SOUTH -> Shapes.create(0.75, 0.125, 0.0, 1.0, 0.875, 1.0);
+				case INSULATORS_WEST_NORTH_SOUTH -> Shapes.create(0.0, 0.125, 0.0, 0.25, 0.875, 1.0);
 				
 				case EDGE_INSIDE_DOWN_NORTH_UP_SOUTH -> Shapes.or(Shapes.create(0.125, 0.0, 0.0, 0.875, 0.25, 1.0), Shapes.create(0.125, 0.0, 0.0, 0.875, 1.0, 0.25)).optimize();
 				case EDGE_INSIDE_DOWN_SOUTH_UP_NORTH -> Shapes.or(Shapes.create(0.125, 0.0, 0.0, 0.875, 0.25, 1.0), Shapes.create(0.125, 0.0, 0.75, 0.875, 1.0, 1.0)).optimize();
@@ -207,7 +258,10 @@ public class BusbarBlock extends OEBlockBase implements EntityBlock{
 				case BEND_UP_SOUTH_WEST -> Shapes.create(0.0, 0.75, 0.125, 0.875, 1.0, 1.0);
 				case BEND_UP_WEST_NORTH -> Shapes.create(0.0, 0.75, 0.0, 0.875, 1.0, 0.875);
 				
-				// TODO Missing wall bends
+				case BEND_NORTH_DOWN_EAST, BEND_EAST_DOWN_SOUTH, BEND_SOUTH_DOWN_WEST, BEND_WEST_DOWN_NORTH -> Shapes.create(0.0, 0.125, 0.0, 0.875, 1.0, 0.25);
+				case BEND_NORTH_EAST_UP, BEND_EAST_SOUTH_UP, BEND_SOUTH_WEST_UP, BEND_WEST_NORTH_UP -> Shapes.create(0.75, 0.125, 0.0, 1.0, 1.0, 0.875);
+				case BEND_NORTH_UP_WEST, BEND_EAST_UP_NORTH, BEND_SOUTH_UP_EAST, BEND_WEST_UP_SOUTH -> Shapes.create(0.125, 0.125, 0.75, 1.0, 1.0, 1.0);
+				case BEND_NORTH_WEST_DOWN, BEND_EAST_NORTH_DOWN, BEND_SOUTH_EAST_DOWN, BEND_WEST_SOUTH_DOWN -> Shapes.create(0.0, 0.125, 0.125, 0.25, 1.0, 1.0);
 				
 				case EDGE_OUTSIDE_DOWN_NORTH_UP_SOUTH -> Shapes.create(0.125, 0.0, 0.75, 0.875, 0.25, 1.0);
 				case EDGE_OUTSIDE_DOWN_EAST_UP_WEST -> Shapes.create(0.0, 0.0, 0.125, 0.25, 0.25, 0.875);
@@ -223,12 +277,12 @@ public class BusbarBlock extends OEBlockBase implements EntityBlock{
 			};
 			// @formatter:on
 			
-			if(vShape == null){
-				OverEngineered.log.info("Missing voxelshape for shape \"" + shape + "\"");
+			if(vShape != null){
+				map.put(shape, vShape);
+			}else{
+				OverEngineered.log.info("Missing voxelshape for shape \"" + shape.toString().toLowerCase() + "\"");
 				continue;
 			}
-			
-			map.put(shape, vShape);
 		}
 		
 		return map;

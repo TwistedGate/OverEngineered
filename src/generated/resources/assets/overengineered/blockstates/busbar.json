@@ -54,60 +54,6 @@
       "x": -90,
       "y": 270
     },
-    "shape=floating_down_north_south": {
-      "model": "overengineered:block/busbar_without_insulators"
-    },
-    "shape=floating_down_east_west": {
-      "model": "overengineered:block/busbar_without_insulators",
-      "y": 90
-    },
-    "shape=floating_up_north_south": {
-      "model": "overengineered:block/busbar_without_insulators",
-      "x": 180
-    },
-    "shape=floating_up_east_west": {
-      "model": "overengineered:block/busbar_without_insulators",
-      "x": 180,
-      "y": 90
-    },
-    "shape=floating_north_up_down": {
-      "model": "overengineered:block/busbar_without_insulators",
-      "x": -90
-    },
-    "shape=floating_east_up_down": {
-      "model": "overengineered:block/busbar_without_insulators",
-      "x": -90,
-      "y": 90
-    },
-    "shape=floating_south_up_down": {
-      "model": "overengineered:block/busbar_without_insulators",
-      "x": -90,
-      "y": 180
-    },
-    "shape=floating_west_up_down": {
-      "model": "overengineered:block/busbar_without_insulators",
-      "x": -90,
-      "y": 270
-    },
-    "shape=floating_north_east_west": {
-      "model": "overengineered:block/busbar_without_insulators_pre_y_rotated",
-      "x": -90
-    },
-    "shape=floating_east_north_south": {
-      "model": "overengineered:block/busbar_without_insulators_pre_y_rotated",
-      "x": -90,
-      "y": 90
-    },
-    "shape=floating_south_east_west": {
-      "model": "overengineered:block/busbar_without_insulators_pre_y_rotated",
-      "x": -90,
-      "y": 180
-    },
-    "shape=floating_west_north_south": {
-      "model": "overengineered:block/busbar_without_insulators_pre_y_rotated",
-      "x": -90,
-      "y": 270
-    },
     "shape=bend_down_north_east": {
       "model": "overengineered:block/busbar_bend",
       "y": 90
