@@ -26,6 +26,10 @@ public class OEContent{
 		return BLOCK_REGISTER.register(name, constructor);
 	}
 	
+	protected static final <T extends Item> RegistryObject<T> registerItem(String name, Supplier<T> constructor){
+		return ITEM_REGISTER.register(name, constructor);
+	}
+	
 	public static class Blocks{
 		
 		private static void forceClassLoad(){
