@@ -28,7 +28,8 @@ public class OEDataGenerator{
 		}
 		
 		if(event.includeClient()){
-			
+			generator.addProvider(new OEBlockStates(generator, exhelper));
+			generator.addProvider(new OEItemModels(generator, exhelper));
 		}
 		
 	}
