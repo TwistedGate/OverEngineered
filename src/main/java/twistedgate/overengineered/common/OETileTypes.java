@@ -1,4 +1,3 @@
-
 package twistedgate.overengineered.common;
 
 import net.minecraft.world.level.block.entity.BlockEntityType;
