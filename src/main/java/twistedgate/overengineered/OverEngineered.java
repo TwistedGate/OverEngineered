@@ -74,6 +74,8 @@ public class OverEngineered{
 		IEventBus eBus = FMLJavaModLoadingContext.get().getModEventBus();
 		OERegisters.addRegistersToEventBus(eBus);
 		
+		OEContent.modConstruction();
+		
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 	
