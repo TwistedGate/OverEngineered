@@ -27,6 +27,8 @@ public class OEContent{
 		Items.forceClassLoad();
 		
 		Multiblock.forceClassLoad();
+		
+		OETileTypes.forceClassLoad();
 	}
 	
 	public static void init(ParallelDispatchEvent event){
