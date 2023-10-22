@@ -22,7 +22,7 @@ public class OEContent{
 		}
 	}
 	
-	public static void populate(){
+	public static void modConstruction(){
 		Blocks.forceClassLoad();
 		Items.forceClassLoad();
 		
