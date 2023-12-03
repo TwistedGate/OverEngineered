@@ -26,6 +26,13 @@ Random bits and bobs, here and there. Possibly containing QoL things.
 	side="BOTH"
 
 [[dependencies.overengineered]]
+    modId="create"
+    mandatory=false
+    versionRange="[0.5.1.e,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.overengineered]]
 	modId="forge"
 	mandatory=true
 	versionRange="[40.1.25,)"
