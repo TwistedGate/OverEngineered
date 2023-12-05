@@ -1,0 +1,9 @@
+{
+	"loader": "forge:obj",
+	"model": "overengineered:models/multiblock/obj/universal_motor_rotor.obj",
+    "textures": {
+      "texture": "overengineered:multiblock/universal_motor",
+      "particle": "overengineered:multiblock/universal_motor"
+    },
+	"flip-v": true
+}

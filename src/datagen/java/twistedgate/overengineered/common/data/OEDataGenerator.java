@@ -3,6 +3,7 @@ package twistedgate.overengineered.common.data;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import blusunrize.immersiveengineering.common.blocks.multiblocks.StaticTemplateManager;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -19,6 +20,7 @@ public class OEDataGenerator{
 	public static void generate(GatherDataEvent event){
 		DataGenerator generator = event.getGenerator();
 		ExistingFileHelper exhelper = event.getExistingFileHelper();
+		StaticTemplateManager.EXISTING_HELPER = exhelper;
 		
 		if(event.includeServer()){
 			OEBlockTags blockTags = new OEBlockTags(generator, exhelper);

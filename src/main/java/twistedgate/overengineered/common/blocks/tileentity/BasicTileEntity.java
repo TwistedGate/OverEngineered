@@ -42,7 +42,8 @@ public abstract class BasicTileEntity extends BlockEntity{
 	
 	@Override
 	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt){
-		load(pkt.getTag());
+		if(pkt.getTag() != null)
+			load(pkt.getTag());
 	}
 	
 	@Override

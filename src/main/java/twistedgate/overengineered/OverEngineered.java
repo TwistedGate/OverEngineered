@@ -85,6 +85,7 @@ public class OverEngineered{
 		proxy.preInit();
 		
 		OEContent.init(event);
+		
 		proxy.init();
 		
 		proxy.postInit();
