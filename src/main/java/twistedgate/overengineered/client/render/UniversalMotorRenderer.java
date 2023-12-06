@@ -10,6 +10,8 @@ import com.mojang.blaze3d.vertex.PoseStack.Pose;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
+import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
+import com.simibubi.create.foundation.utility.AnimationTickHolder;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -17,7 +19,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.core.Direction.Axis;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -61,15 +62,23 @@ public class UniversalMotorRenderer implements BlockEntityRenderer<UniversalMoto
 	private void renderRotor(PoseStack matrix, MultiBufferSource buffer, UniversalMotorTileEntity te, float partialTicks, int light, int overlay){
 		matrix.pushPose();
 		{
-			float rot = te.rotation + te.rotationSpeed * partialTicks;
+			float angle = ((AnimationTickHolder.getRenderTime(te.getLevel()) * -KineticBlockEntity.convertToAngular(te.getSpeed())) % 360);
+			
+			int dir = switch(te.getFacing()){
+				case EAST -> -90;
+				case SOUTH -> 180;
+				case WEST -> 90;
+				default -> 0;
+			};
 			
 			matrix.translate(0.5, 1.5, 0.5);
-			matrix.mulPose(new Quaternion(te.getFacing().getAxis() == Axis.X ? X_AXIS : Z_AXIS, rot, true));
+			matrix.mulPose(new Quaternion(Vector3f.YP, dir, true));
+			matrix.mulPose(new Quaternion(Vector3f.ZP, angle, true));
 			List<BakedQuad> quads = f.apply(UM_ROTOR_RL).getQuads(null, null, null, EmptyModelData.INSTANCE);
 			Pose last = matrix.last();
 			VertexConsumer solid = buffer.getBuffer(RenderType.solid());
 			for(BakedQuad quad:quads){
-				solid.putBulkData(last, quad, 1.0F, 1.0F, 1.0F, light, overlay);
+				solid.putBulkData(last, quad, 0.80F, 0.80F, 0.80F, light, overlay);
 			}
 		}
 		matrix.popPose();

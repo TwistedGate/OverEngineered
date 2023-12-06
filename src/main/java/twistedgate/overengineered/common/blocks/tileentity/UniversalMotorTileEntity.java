@@ -5,9 +5,11 @@ import java.util.Set;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockBlockEntity;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcess;
+import blusunrize.immersiveengineering.common.util.orientation.RelativeBlockFace;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -25,23 +27,44 @@ import twistedgate.overengineered.common.multiblock.UniversalMotorMultiblock;
  * @author TwistedGate
  */
 public class UniversalMotorTileEntity extends PoweredMultiblockBlockEntity<UniversalMotorTileEntity, MultiblockRecipe> implements OECommonTickableTile{
+	public static final int maxSpeed = 256;
+	
+	public static final BlockPos AXLE_IO_A = new BlockPos(1, 1, 2);
+	public static final BlockPos AXLE_IO_B = new BlockPos(1, 1, 0);
+	
+	public static final Set<BlockPos> REDSTONE_POS = Set.of(new BlockPos(0, 1, 2));
+	public static final Set<MultiblockFace> ENERGY_POS = Set.of(new MultiblockFace(0, 1, 2, RelativeBlockFace.UP));
 	
 	public UniversalMotorTileEntity(BlockEntityType<UniversalMotorTileEntity> type, BlockPos pos, BlockState state){
 		super(UniversalMotorMultiblock.INSTANCE, 1024, true, type, pos, state);
 	}
 	
-	public static final int rotationTopSpeed = 256;
+	private float speed = 2;
 	
-	public int rotationSpeed = 2;
-	public int rotation = 0;
+	public void setSpeed(float speed){
+		this.speed = Mth.clamp(speed, -maxSpeed, maxSpeed);
+	}
+	
+	public float getSpeed(){
+		return this.speed;
+	}
 	
 	@Override
 	public void tickClient(){
-		this.rotation = (this.rotation + rotationSpeed) % 360;
 	}
 	
 	@Override
 	public void tickServer(){
+	}
+	
+	@Override
+	public Set<MultiblockFace> getEnergyPos(){
+		return ENERGY_POS;
+	}
+	
+	@Override
+	public Set<BlockPos> getRedstonePos(){
+		return REDSTONE_POS;
 	}
 	
 	@Override
@@ -65,11 +88,6 @@ public class UniversalMotorTileEntity extends PoweredMultiblockBlockEntity<Unive
 	
 	@Override
 	protected MultiblockRecipe getRecipeForId(Level level, ResourceLocation id){
-		return null;
-	}
-	
-	@Override
-	public Set<MultiblockFace> getEnergyPos(){
 		return null;
 	}
 	
@@ -128,5 +146,9 @@ public class UniversalMotorTileEntity extends PoweredMultiblockBlockEntity<Unive
 	@Override
 	public boolean isInWorldProcessingMachine(){
 		return false;
+	}
+	
+	public static enum Mode{
+		MOTOR, GENERATOR;
 	}
 }

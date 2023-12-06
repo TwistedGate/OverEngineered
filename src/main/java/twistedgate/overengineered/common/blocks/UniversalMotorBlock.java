@@ -24,25 +24,26 @@ public class UniversalMotorBlock extends OEMetalMultiblock<UniversalMotorTileEnt
 	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit){
 		if(world.isClientSide && player.getItemInHand(hand).isEmpty()){
 			BlockEntity te = world.getBlockEntity(pos);
-			if(te instanceof UniversalMotorTileEntity motor && motor.posInMultiblock.equals(new BlockPos(0, 0, 0))){
+			if(te instanceof UniversalMotorTileEntity motor && motor.posInMultiblock.equals(new BlockPos(2, 0, 2))){
 				motor = motor.master();
 				
 				if(!player.isCrouching()){
-					if((++motor.rotationSpeed) > UniversalMotorTileEntity.rotationTopSpeed)
-						motor.rotationSpeed = UniversalMotorTileEntity.rotationTopSpeed;
+					// Casting getSpeed() to int to hopefuly avoid rounding errors with add/sub
+					motor.setSpeed(((int) motor.getSpeed()) + 1);
 				}else{
-					if((--motor.rotationSpeed) < -UniversalMotorTileEntity.rotationTopSpeed)
-						motor.rotationSpeed = -UniversalMotorTileEntity.rotationTopSpeed;
+					motor.setSpeed(((int) motor.getSpeed()) - 1);
 				}
-				player.displayClientMessage(new TextComponent(Integer.toString(motor.rotationSpeed)), true);
+				
+				player.displayClientMessage(new TextComponent(Integer.toString((int) motor.getSpeed())), true);
+				return InteractionResult.SUCCESS;
 			}
 		}
-		return InteractionResult.SUCCESS;
+		return InteractionResult.PASS;
 	}
 	
 	@Override
 	public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState){
-		// TODO Somehow switch to UniversalMotorSlaveTileEntity twice for input/output shaft
+		// TODO Somehow switch to UniversalMotorSlaveTileEntity twice for input/output shaft?
 		return super.newBlockEntity(pPos, pState);
 	}
 }
