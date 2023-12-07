@@ -1,22 +1,30 @@
 package twistedgate.overengineered.common.blocks;
 
+import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.common.blocks.MultiblockBEType;
-import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartBlockEntity;
-import blusunrize.immersiveengineering.common.blocks.metal.MetalMultiblockBlock;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import twistedgate.overengineered.common.blocks.ticking.OECommonTickableTile;
+import twistedgate.overengineered.experimental.common.blocks.CustomHorizontalAxisKineticBlock;
+import twistedgate.overengineered.experimental.common.blocks.tileentity.KineticMultiblockPartTileEntity;
 
-public abstract class OEMetalMultiblock<T extends MultiblockPartBlockEntity<T> & OECommonTickableTile> extends MetalMultiblockBlock<T>{
+public abstract class OEMetalMultiblock<T extends KineticMultiblockPartTileEntity<T> & OECommonTickableTile> extends CustomHorizontalAxisKineticBlock<T>{
 	private final MultiblockBEType<T> multiblockBEType;
 	
 	public OEMetalMultiblock(MultiblockBEType<T> entityType, Block.Properties props){
-		super(entityType, props.requiresCorrectToolForDrops().isViewBlocking((state, blockReader, pos) -> false).noOcclusion());
+		super(props.requiresCorrectToolForDrops().isViewBlocking((state, blockReader, pos) -> false).noOcclusion(), entityType);
 		this.multiblockBEType = entityType;
+	}
+	
+	@Override
+	protected void createBlockStateDefinition(Builder<Block, BlockState> builder){
+		super.createBlockStateDefinition(builder);
+		builder.add(IEProperties.MIRRORED);
 	}
 	
 	@Override

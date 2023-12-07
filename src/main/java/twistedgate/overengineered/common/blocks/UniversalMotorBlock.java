@@ -29,9 +29,9 @@ public class UniversalMotorBlock extends OEMetalMultiblock<UniversalMotorTileEnt
 				
 				if(!player.isCrouching()){
 					// Casting getSpeed() to int to hopefuly avoid rounding errors with add/sub
-					motor.setSpeed(((int) motor.getSpeed()) + 1);
+					motor.setSpeed(((int) motor.getSpeed()) + 5);
 				}else{
-					motor.setSpeed(((int) motor.getSpeed()) - 1);
+					motor.setSpeed(((int) motor.getSpeed()) - 5);
 				}
 				
 				player.displayClientMessage(new TextComponent(Integer.toString((int) motor.getSpeed())), true);
@@ -39,11 +39,5 @@ public class UniversalMotorBlock extends OEMetalMultiblock<UniversalMotorTileEnt
 			}
 		}
 		return InteractionResult.PASS;
-	}
-	
-	@Override
-	public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState){
-		// TODO Somehow switch to UniversalMotorSlaveTileEntity twice for input/output shaft?
-		return super.newBlockEntity(pPos, pState);
 	}
 }

@@ -33,9 +33,4 @@ public class UniversalMotorMultiblock extends OETemplateMultiblock{
 	public Component getDisplayName(){
 		return new TextComponent("Universal Motor");
 	}
-	
-	@Override
-	protected void replaceStructureBlock(StructureBlockInfo info, Level world, BlockPos actualPos, boolean mirrored, Direction clickDirection, Vec3i offsetFromMaster){
-		super.replaceStructureBlock(info, world, actualPos, mirrored, clickDirection, offsetFromMaster);
-	}
 }
