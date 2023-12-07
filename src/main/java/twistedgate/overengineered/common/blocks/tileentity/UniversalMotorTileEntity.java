@@ -164,6 +164,7 @@ public class UniversalMotorTileEntity extends KineticMultiblockPartTileEntity<Un
 		}
 		
 		int amount = this.energyStator.extractEnergy(this.energyStator.getMaxEnergyStored(), false);
+		
 		setChanged();
 	}
 	
@@ -263,7 +264,7 @@ public class UniversalMotorTileEntity extends KineticMultiblockPartTileEntity<Un
 		return this.posInMultiblock.equals(AXLE_IO_B);
 	}
 	
-	private static final CachedShapesWithTransform<BlockPos, Pair<Direction, Boolean>> SHAPES = CachedShapesWithTransform.createForMultiblock(UniversalMotorTileEntity::getShape);
+	private static CachedShapesWithTransform<BlockPos, Pair<Direction, Boolean>> SHAPES = CachedShapesWithTransform.createForMultiblock(UniversalMotorTileEntity::getShape);
 	
 	@Override
 	public VoxelShape getBlockBounds(CollisionContext ctx){
@@ -271,13 +272,69 @@ public class UniversalMotorTileEntity extends KineticMultiblockPartTileEntity<Un
 	}
 	
 	public static List<AABB> getShape(BlockPos posInMultiblock){
-		int x = posInMultiblock.getX();
-		int y = posInMultiblock.getY();
-		int z = posInMultiblock.getZ();
+		final int x = posInMultiblock.getX();
+		final int y = posInMultiblock.getY();
+		final int z = posInMultiblock.getZ();
 		
 		List<AABB> main = new ArrayList<>();
 		
-		// TODO
+		if(y == 0){
+			// Baseplate
+			if(!((x == 0 && z == 2) || (x == 2 && z == 2))){
+				AABBUtils.box16(main, 0, 0, 0, 16, 8, 16);
+			}
+		}
+		
+		if(y == 1){
+			// Axle
+			if(x == 1 && z >= 0 && z <= 2){
+				AABBUtils.box16(main, 5, 5, 0, 11, 11, 16);
+			}
+			
+			if(x == 1){
+				// Bearings
+				if(z == 0 || z == 2){
+					AABBUtils.box16(main, 4, 4, 6, 12, 12, 10);
+				}
+				
+				// Carbon Brush holder
+				if(z == 0){
+					AABBUtils.box16(main, 0, 6, 6, 4, 10, 16);
+					AABBUtils.box16(main, 12, 6, 6, 16, 10, 16);
+				}
+			}
+		}
+		
+		// Supports
+		if(y == 0 || y == 1){
+			if(y == 0){
+				if(x == 1 && (z == 0 || z == 2)){
+					AABBUtils.box16(main, 2, 8, 6, 6, 16, 10);
+					AABBUtils.box16(main, 10, 8, 6, 14, 16, 10);
+				}
+			}
+			if(y == 1){
+				if(x == 1 && (z == 0 || z == 2)){
+					AABBUtils.box16(main, 3, 0, 6, 6, 4, 10);
+					AABBUtils.box16(main, 10, 0, 6, 13, 4, 10);
+				}
+			}
+		}
+		
+		// Stator
+		if(z == 1){
+			if(!((x == 0 && y == 2) || (x == 2 && y == 2))){
+				if(x == 1 && y == 2){
+					AABBUtils.box16(main, 0, 0, 4, 16, 14, 12);
+				}else{
+					AABBUtils.box16(main, 0, 0, 4, 16, 16, 12);
+				}
+			}else{
+				AABBUtils.box16(main, 0, 0, 4, 16, 8, 12);
+				if(x == 0 && y == 2) AABBUtils.box16(main, 8, 8, 4, 16, 14, 12);
+				if(x == 2 && y == 2) AABBUtils.box16(main, 0, 8, 4, 8, 14, 12);
+			}
+		}
 		
 		// Use default cube shape if nessesary
 		if(main.isEmpty()){

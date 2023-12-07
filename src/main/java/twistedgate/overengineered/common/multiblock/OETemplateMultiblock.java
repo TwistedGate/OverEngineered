@@ -3,10 +3,8 @@ package twistedgate.overengineered.common.multiblock;
 import java.util.function.Supplier;
 
 import blusunrize.immersiveengineering.api.IEProperties;
-import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartBlockEntity;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.IETemplateMultiblock;
 import blusunrize.immersiveengineering.common.register.IEBlocks;
-import blusunrize.immersiveengineering.common.util.IELogger;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;

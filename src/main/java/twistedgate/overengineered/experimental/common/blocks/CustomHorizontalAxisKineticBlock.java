@@ -40,6 +40,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.common.util.LazyOptional;
 import twistedgate.overengineered.experimental.common.blocks.tileentity.CustomKineticBlockEntity;
 import twistedgate.overengineered.experimental.common.blocks.tileentity.KineticMultiblockPartTileEntity;
 
@@ -52,16 +53,12 @@ public abstract class CustomHorizontalAxisKineticBlock<T extends KineticMultiblo
 	protected int lightOpacity;
 	private final BiFunction<BlockPos, BlockState, T> makeEntity;
 	protected final boolean notNormalBlock;
-	private final boolean hasCustomCollisions;
 	public CustomHorizontalAxisKineticBlock(Properties props, MultiblockBEType<T> entityType){
 		super(props);
 		this.makeEntity = entityType;
 		this.notNormalBlock = !defaultBlockState().canOcclude();
 		
 		this.registerDefaultState(getInitDefaultState());
-		
-		T tmp = this.makeEntity.apply(BlockPos.ZERO, getInitDefaultState());
-		this.hasCustomCollisions = tmp instanceof IEBlockInterfaces.ICollisionBounds;
 	}
 	
 	@Override
@@ -206,17 +203,28 @@ public abstract class CustomHorizontalAxisKineticBlock<T extends KineticMultiblo
 		if(state.getBlock()==this)
 		{
 			BlockEntity te = world.getBlockEntity(pos);
-			if(te instanceof ISelectionBounds)
-				return ((ISelectionBounds)te).getSelectionShape(context);
+			if(te instanceof ISelectionBounds bounds)
+				return bounds.getSelectionShape(context);
 		}
 		return super.getShape(state, world, pos, context);
+	}
+	
+	private LazyOptional<Boolean> lazyCol;
+	private final boolean hasCustomCollisions(){
+		if(this.lazyCol == null){
+			this.lazyCol = LazyOptional.of(() -> {
+				T tmp = this.makeEntity.apply(BlockPos.ZERO, getInitDefaultState());
+				return tmp instanceof IEBlockInterfaces.ICollisionBounds;
+			});
+		}
+		return this.lazyCol.orElse(false);
 	}
 
 	@Override
 	@SuppressWarnings("deprecation")
 	public VoxelShape getCollisionShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context)
 	{
-		if(this.hasCustomCollisions)
+		if(hasCustomCollisions())
 		{
 			BlockEntity te = world.getBlockEntity(pos);
 			if(te instanceof ICollisionBounds collisionBounds)

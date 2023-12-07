@@ -4,12 +4,8 @@ import java.util.function.Consumer;
 
 import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks.MultiblockManualData;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate.StructureBlockInfo;
 import twistedgate.overengineered.common.OEContent;
 import twistedgate.overengineered.utils.ResourceUtils;
 
