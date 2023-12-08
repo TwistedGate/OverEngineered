@@ -50,7 +50,7 @@ public class UniversalMotorRenderer implements BlockEntityRenderer<UniversalMoto
 	@SuppressWarnings("deprecation")
 	@Override
 	public void render(UniversalMotorTileEntity te, float partialTicks, @Nonnull PoseStack matrix, @Nonnull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn){
-		if(!te.formed || te.isDummy() || !te.getLevelNonnull().hasChunkAt(te.getBlockPos())){
+		if(te == null || !te.formed || te.isDummy() || !te.getLevelNonnull().hasChunkAt(te.getBlockPos())){
 			return;
 		}
 		
@@ -59,19 +59,19 @@ public class UniversalMotorRenderer implements BlockEntityRenderer<UniversalMoto
 	
 	static final Vector3f X_AXIS = new Vector3f(1.0F, 0.0F, 0.0F);
 	static final Vector3f Z_AXIS = new Vector3f(0.0F, 0.0F, 1.0F);
-	private void renderRotor(PoseStack matrix, MultiBufferSource buffer, UniversalMotorTileEntity te, float partialTicks, int light, int overlay){
+	private void renderRotor(PoseStack matrix, MultiBufferSource buffer, UniversalMotorTileEntity master, float partialTicks, int light, int overlay){
 		matrix.pushPose();
 		{
-			float angle = ((AnimationTickHolder.getRenderTime(te.getLevel()) * -KineticBlockEntity.convertToAngular(te.getSpeed())) % 360);
+			float angle = ((AnimationTickHolder.getRenderTime(master.getLevel()) * KineticBlockEntity.convertToAngular(master.getSpeed()) + 22.5F) % 360);
 			
-			int dir = switch(te.getFacing()){
+			int dir = switch(master.getFacing()){
 				case EAST -> -90;
 				case SOUTH -> 180;
 				case WEST -> 90;
 				default -> 0;
 			};
 			
-			matrix.translate(0.5, 1.5, 0.5);
+			matrix.translate(0.5, 0.5, 0.5);
 			matrix.mulPose(new Quaternion(Vector3f.YP, dir, true));
 			matrix.mulPose(new Quaternion(Vector3f.ZP, angle, true));
 			List<BakedQuad> quads = f.apply(UM_ROTOR_RL).getQuads(null, null, null, EmptyModelData.INSTANCE);

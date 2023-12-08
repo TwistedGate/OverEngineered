@@ -136,10 +136,17 @@ public abstract class CustomHorizontalAxisKineticBlock<T extends KineticMultiblo
 	
 	protected BlockState getInitDefaultState(){
 		BlockState ret = this.stateDefinition.any();
+		
+		/*// ALL multiblocks i've seen thus far only have horizontal facing
 		if(ret.hasProperty(IEProperties.FACING_ALL))
 			ret = ret.setValue(IEProperties.FACING_ALL, getDefaultFacing());
-		else if(ret.hasProperty(IEProperties.FACING_HORIZONTAL))
+		else*/
+		if(ret.hasProperty(IEProperties.FACING_HORIZONTAL))
 			ret = ret.setValue(IEProperties.FACING_HORIZONTAL, getDefaultFacing());
+		
+		if(ret.hasProperty(HorizontalAxisKineticBlock.HORIZONTAL_AXIS))
+			ret = ret.setValue(HorizontalAxisKineticBlock.HORIZONTAL_AXIS, getDefaultFacing().getAxis());
+		
 		for(BooleanProperty defaultOff:DEFAULT_OFF)
 			if(ret.hasProperty(defaultOff))
 				ret = ret.setValue(defaultOff, false);
@@ -244,8 +251,8 @@ public abstract class CustomHorizontalAxisKineticBlock<T extends KineticMultiblo
 		if(world.getBlockState(pos).getBlock()==this)
 		{
 			BlockEntity te = world.getBlockEntity(pos);
-			if(te instanceof ISelectionBounds)
-				return ((ISelectionBounds)te).getSelectionShape(null);
+			if(te instanceof ISelectionBounds selectionBounds)
+				return selectionBounds.getSelectionShape(null);
 		}
 		return super.getInteractionShape(state, world, pos);
 	}

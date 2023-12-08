@@ -13,7 +13,6 @@ import blusunrize.immersiveengineering.common.util.MultiblockCapability;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -60,11 +59,9 @@ public class UniversalMotorTileEntity extends KineticMultiblockPartTileEntity<Un
 	public UniversalMotorTileEntity(BlockEntityType<UniversalMotorTileEntity> type, BlockPos pos, BlockState state){
 		super(UniversalMotorMultiblock.INSTANCE, type, true, pos, state);
 		
-		this.energyMain = new AveragingEnergyStorage(2048);
+		this.energyMain = new AveragingEnergyStorage(4096);
 		this.energyMainCap = MultiblockCapability.make(
-			this, be -> be.energyMainCap, KineticMultiblockPartTileEntity::master,
-			
-			registerEnergyIO(this.energyMain, this::isMotor, this::isGenerator)
+			this, be -> be.energyMainCap, KineticMultiblockPartTileEntity::master, registerEnergyIO(this.energyMain, this::isMotor, this::isGenerator)
 		);
 		
 		this.energyStator = new AveragingEnergyStorage(1024);
@@ -112,8 +109,8 @@ public class UniversalMotorTileEntity extends KineticMultiblockPartTileEntity<Un
 	}
 	
 	@Override
-	public void setSpeed(float speed){
-		this.speed = Mth.clamp(speed, -maxSpeed, maxSpeed);
+	public Set<BlockPos> getRedstonePos(){
+		return REDSTONE_POS;
 	}
 	
 	public void changeMode(Mode newMode){
@@ -140,6 +137,10 @@ public class UniversalMotorTileEntity extends KineticMultiblockPartTileEntity<Un
 		return this.mode == Mode.MOTOR;
 	}
 	
+	public boolean isMaster(){
+		return this.offsetToMaster.equals(BlockPos.ZERO);
+	}
+	
 	@Override
 	public void tickClient(){
 	}
@@ -148,13 +149,12 @@ public class UniversalMotorTileEntity extends KineticMultiblockPartTileEntity<Un
 	
 	@Override
 	public void tickServer(){
-		
-		changeMode(isRSDisabled() ? Mode.GENERATOR : Mode.MOTOR);
-		
 		switch(this.mode){
 			case GENERATOR -> asGenerator();
 			case MOTOR -> asMotor();
 		}
+		
+		changeMode(isRSDisabled() ? Mode.GENERATOR : Mode.MOTOR);
 	}
 	
 	private void asGenerator(){
@@ -163,7 +163,10 @@ public class UniversalMotorTileEntity extends KineticMultiblockPartTileEntity<Un
 			updateGeneratedRotation();
 		}
 		
+		@SuppressWarnings("unused")
 		int amount = this.energyStator.extractEnergy(this.energyStator.getMaxEnergyStored(), false);
+		
+		// TODO Rotation dependant power generation
 		
 		setChanged();
 	}
@@ -175,78 +178,10 @@ public class UniversalMotorTileEntity extends KineticMultiblockPartTileEntity<Un
 		if(this.generatedSpeed != (int) f){
 			this.generatedSpeed = (int) f;
 			
-			UniversalMotorTileEntity axleA = getAxleTileEntity(AXLE_IO_A);
-			UniversalMotorTileEntity axleB = getAxleTileEntity(AXLE_IO_B);
-			
-			axleA.updateGeneratedRotation();
-			axleB.updateGeneratedRotation();
+			updateGeneratedRotation();
 		}
 		
 		setChanged();
-	}
-	
-	@Override
-	public float getGeneratedSpeed(){
-		float generated = 0.0F;
-		if(isAxleA() || isAxleB()){
-			UniversalMotorTileEntity master = master();
-			
-			if(master != null && master.mode == Mode.MOTOR){
-				generated = convertToDirection(master.generatedSpeed, master.getFacing());
-			}
-		}
-		return generated;
-	}
-	
-	@Override
-	public void onSpeedChanged(float previousSpeed){
-		super.onSpeedChanged(previousSpeed);
-	}
-	
-	@Override
-	public void updateGeneratedRotation(){
-		super.updateGeneratedRotation();
-	}
-	
-	private static float stressSupplier = 0.0625F;
-	
-	@Override
-	public float calculateStressApplied(){
-		float stress = 0.0F;
-		if(isAxleA() || isAxleB()){
-			UniversalMotorTileEntity master = master();
-			if(master != null){
-				stress = switch(master.mode){
-					case GENERATOR -> stressSupplier;
-					case MOTOR -> 0.0F;
-				};
-			}
-		}
-		
-		this.lastStressApplied = stress;
-		return stress;
-	}
-	
-	@Override
-	public float calculateAddedStressCapacity(){
-		float stress = 0.0F;
-		if(isAxleA() || isAxleB()){
-			UniversalMotorTileEntity master = master();
-			if(master != null){
-				stress = switch(master.mode){
-					case MOTOR -> stressSupplier;
-					case GENERATOR -> 0.0F;
-				};
-			}
-		}
-		
-		this.lastCapacityProvided = stress;
-		return stress;
-	}
-	
-	@Override
-	public Set<BlockPos> getRedstonePos(){
-		return REDSTONE_POS;
 	}
 	
 	public UniversalMotorTileEntity getAxleTileEntity(BlockPos axlePos){
@@ -256,12 +191,51 @@ public class UniversalMotorTileEntity extends KineticMultiblockPartTileEntity<Un
 		return getEntityForPos(axlePos);
 	}
 	
-	public boolean isAxleA(){
-		return this.posInMultiblock.equals(AXLE_IO_A);
+	@Override
+	public float getGeneratedSpeed(){
+		if(!isMaster())
+			return 0.0F;
+		
+		float generated = 0.0F;
+		
+		if(this.mode == Mode.MOTOR){
+			generated = convertToDirection(this.generatedSpeed, this.getFacing());
+		}
+		
+		return generated;
 	}
 	
-	public boolean isAxleB(){
-		return this.posInMultiblock.equals(AXLE_IO_B);
+	/** Stress capacity added to kinetics in Motor-Mode */
+	private static final float STRESS_CAPACITY = 16384 / 256F;
+	/** Stress impacted on kinetics in Generator-Mode */
+	private static final float STRESS_IMPACT = 32768 / 256F;
+	
+	@Override
+	public float calculateAddedStressCapacity(){
+		if(!isMaster())
+			return 0.0F;
+		
+		float stress = switch(this.mode){
+			case MOTOR -> STRESS_CAPACITY;
+			case GENERATOR -> 0.0F;
+		};
+		
+		this.lastCapacityProvided = stress;
+		return stress;
+	}
+	
+	@Override
+	public float calculateStressApplied(){
+		if(!isMaster())
+			return 0.0F;
+		
+		float stress = switch(this.mode){
+			case GENERATOR -> STRESS_IMPACT;
+			case MOTOR -> 0.0F;
+		};
+		
+		this.lastStressApplied = stress;
+		return stress;
 	}
 	
 	private static CachedShapesWithTransform<BlockPos, Pair<Direction, Boolean>> SHAPES = CachedShapesWithTransform.createForMultiblock(UniversalMotorTileEntity::getShape);

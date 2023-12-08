@@ -60,6 +60,10 @@ public abstract class CustomKineticBlockEntity extends GeneratingKineticBlockEnt
 	public abstract void readCustom(CompoundTag tag, boolean clientPacket);
 	public abstract void writeCustom(CompoundTag tag, boolean clientPacket);
 	
+	protected ResettableCapability<IEnergyStorage> registerEnergyIO(IEnergyStorage directStorage, Supplier<Boolean> allowInsert, Supplier<Boolean> allowExtract){
+		return registerCapability(new ModeSupportedWrappingEnergyStorage(directStorage, allowInsert, allowExtract, this::setChanged));
+	}
+	
 	// ------------------------------------------------------------
 	// Everything copied from IEBaseBlockEntity is below this point
 	// ------------------------------------------------------------
@@ -198,10 +202,6 @@ public abstract class CustomKineticBlockEntity extends GeneratingKineticBlockEnt
 		this.onCapInvalidate.add(hook);
 	}
 	
-	protected ResettableCapability<IEnergyStorage> registerEnergyIO(IEnergyStorage directStorage, Supplier<Boolean> allowInsert, Supplier<Boolean> allowExtract){
-		return registerCapability(new ModeSupportedWrappingEnergyStorage(directStorage, allowInsert, allowExtract, this::setChanged));
-	}
-	
 	protected ResettableCapability<IEnergyStorage> registerEnergyInput(IEnergyStorage directStorage){
 		return registerCapability(new WrappingEnergyStorage(directStorage, true, false, this::setChanged));
 	}
@@ -247,6 +247,8 @@ public abstract class CustomKineticBlockEntity extends GeneratingKineticBlockEnt
 	public void setRemovedOE(){
 	}
 	
+	
+	/** This is a modified variant of IE-{@link WrappingEnergyStorage} */
 	public static record ModeSupportedWrappingEnergyStorage(IEnergyStorage storage, Supplier<Boolean> allowInsert, Supplier<Boolean> allowExtract, Runnable afterTransfer) implements IEnergyStorage{
 
 		@Override
