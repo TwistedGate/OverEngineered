@@ -3,16 +3,24 @@ package twistedgate.overengineered.common.blocks.tileentity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import com.mojang.datafixers.util.Pair;
+import com.simibubi.create.foundation.utility.Lang;
 
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
+import blusunrize.immersiveengineering.api.energy.WrappingEnergyStorage;
 import blusunrize.immersiveengineering.api.utils.shapes.CachedShapesWithTransform;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.util.MultiblockCapability;
+import blusunrize.immersiveengineering.common.util.ResettableCapability;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -44,7 +52,7 @@ public class UniversalMotorTileEntity extends KineticMultiblockPartTileEntity<Un
 	
 	public static final Set<BlockPos> REDSTONE_POS = Set.of(new BlockPos(0, 1, 2));
 	public static final BlockPos ENERGY_POS = new BlockPos(0, 1, 2);
-	public static final BlockPos STATOR_ENERGY_POS = new BlockPos(2, 0, 2);
+	public static final BlockPos ENERGY_POS_STATOR = new BlockPos(2, 0, 2);
 	
 	protected Mode mode = Mode.MOTOR;
 	
@@ -61,28 +69,47 @@ public class UniversalMotorTileEntity extends KineticMultiblockPartTileEntity<Un
 		
 		this.energyMain = new AveragingEnergyStorage(4096);
 		this.energyMainCap = MultiblockCapability.make(
-			this, be -> be.energyMainCap, KineticMultiblockPartTileEntity::master, registerEnergyIO(this.energyMain, this::isMotor, this::isGenerator)
+			this, be -> be.energyMainCap, UniversalMotorTileEntity::master, registerEnergyIO(this.energyMain, this)
 		);
 		
 		this.energyStator = new AveragingEnergyStorage(1024);
 		this.energyStatorCap = MultiblockCapability.make(
-			this, be -> be.energyStatorCap, KineticMultiblockPartTileEntity::master, registerEnergyInput(this.energyStator) 
+			this, be -> be.energyStatorCap, UniversalMotorTileEntity::master, registerEnergyInput(this.energyStator)
 		);
+	}
+	
+	private ResettableCapability<IEnergyStorage> registerEnergyIO(IEnergyStorage directStorage, UniversalMotorTileEntity te){
+		final LazyOptional<UniversalMotorTileEntity> lazy = LazyOptional.of(te::master);
+		
+		Supplier<Boolean> isMotor = () -> {
+			UniversalMotorTileEntity master = lazy.orElseGet(null);
+			if(master == null)
+				return false;
+			return master.isMotor();
+		};
+		
+		Runnable setChanged = () -> {
+			UniversalMotorTileEntity master = lazy.orElseGet(null);
+			if(master == null)
+				return;
+			
+			master.setChanged();
+		};
+		
+		return registerCapability(new ModeSupportedWrappingEnergyStorage(directStorage, isMotor, () -> false, setChanged));
 	}
 	
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side){
-		if(cap == CapabilityEnergy.ENERGY && (side == null || isEnergyPos(ENERGY_POS, side))){
-			return this.energyMainCap.getAndCast();
-		}
-		if(cap == CapabilityEnergy.ENERGY && (side == null || isEnergyPos(STATOR_ENERGY_POS, side))){
-			return this.energyStatorCap.getAndCast();
+		if(cap == CapabilityEnergy.ENERGY){
+			if(isEnergyPos(ENERGY_POS, side)) return this.energyMainCap.getAndCast();
+			if(isEnergyPos(ENERGY_POS_STATOR, side)) return this.energyStatorCap.getAndCast();
 		}
 		return super.getCapability(cap, side);
 	}
 	
 	public boolean isEnergyPos(BlockPos pos, Direction side){
-		return this.posInMultiblock.equals(pos) && side == Direction.UP;
+		return this.posInMultiblock.equals(pos) && (side == null || side == Direction.UP);
 	}
 	
 	@Override
@@ -92,6 +119,7 @@ public class UniversalMotorTileEntity extends KineticMultiblockPartTileEntity<Un
 		CompoundTag energy = tag.getCompound("energy");
 		this.energyMain.deserializeNBT(energy.get("main"));
 		this.energyStator.deserializeNBT(energy.get("stator"));
+		this.lastEnergyUsed = energy.getFloat("lastused");
 		
 		this.mode = Mode.values()[tag.getInt("mode")];
 	}
@@ -103,6 +131,7 @@ public class UniversalMotorTileEntity extends KineticMultiblockPartTileEntity<Un
 		CompoundTag energy = new CompoundTag();
 		energy.put("main", this.energyMain.serializeNBT());
 		energy.put("stator", this.energyStator.serializeNBT());
+		energy.putFloat("lastused", this.lastEnergyUsed);
 		tag.put("energy", energy);
 		
 		tag.putInt("mode", this.mode.id());
@@ -117,12 +146,20 @@ public class UniversalMotorTileEntity extends KineticMultiblockPartTileEntity<Un
 		if(newMode == null || newMode == this.mode)
 			return;
 		
+		if(this.mode == Mode.MOTOR && newMode == Mode.GENERATOR){
+			if(this.generatedSpeed != 0){
+				this.generatedSpeed = 0;
+				updateGeneratedRotation();
+			}
+		}
+		
 		this.mode = newMode;
 		
 		// Dump energy on mode switch
 		this.energyMain.setStoredEnergy(0);
 		
 		setChanged();
+		updateMasterBlock(null, true);
 	}
 	
 	public Mode getMode(){
@@ -157,18 +194,51 @@ public class UniversalMotorTileEntity extends KineticMultiblockPartTileEntity<Un
 		changeMode(isRSDisabled() ? Mode.GENERATOR : Mode.MOTOR);
 	}
 	
+	private int energyGeneration(float baseFE, float energyUsed){
+		return Mth.floor(baseFE * (getSpeed() * energyUsed));
+	}
+	
+	private float lastEnergyUsed = 0.0F;
 	private void asGenerator(){
-		if(this.generatedSpeed != 0){
-			this.generatedSpeed = 0;
-			updateGeneratedRotation();
+		float energyUsed = this.energyStator.extractEnergy(this.energyStator.getMaxEnergyStored(), false) / (float) this.energyStator.getMaxEnergyStored();
+		
+		int energy = energyGeneration(14F, energyUsed);
+		if(this.lastEnergyUsed != energyUsed)
+			updateMasterBlock(null, true);
+		this.lastEnergyUsed = energyUsed;
+		
+		BlockEntity te = getLevelNonnull().getBlockEntity(getBlockPosForPos(ENERGY_POS.relative(Direction.UP)));
+		if(te != null){
+			te.getCapability(CapabilityEnergy.ENERGY, Direction.DOWN).ifPresent(s -> {
+				s.receiveEnergy(energy, false);
+			});
 		}
 		
-		@SuppressWarnings("unused")
-		int amount = this.energyStator.extractEnergy(this.energyStator.getMaxEnergyStored(), false);
-		
-		// TODO Rotation dependant power generation
-		
 		setChanged();
+	}
+	
+	@Override
+	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking){
+		boolean superAdded = super.addToGoggleTooltip(tooltip, isPlayerSneaking);
+		
+		if(!isMaster() || !isGenerator())
+			return superAdded;
+		
+		int energy = energyGeneration(14F, this.lastEnergyUsed);
+		
+		Lang.text("Energy Generation")
+			.style(ChatFormatting.GRAY)
+			.forGoggles(tooltip);
+		
+		Lang.number(energy)
+			.text("IF")
+			.space()
+			.style(ChatFormatting.AQUA)
+			.add(Lang.translate("gui.goggles.at_current_speed")
+				.style(ChatFormatting.DARK_GRAY))
+			.forGoggles(tooltip, 1);
+		
+		return true;
 	}
 	
 	private void asMotor(){
@@ -327,6 +397,53 @@ public class UniversalMotorTileEntity extends KineticMultiblockPartTileEntity<Un
 		
 		public int id(){
 			return this.ordinal();
+		}
+	}
+	
+	
+	/** This is a modified variant of IE-{@link WrappingEnergyStorage} */
+	public static record ModeSupportedWrappingEnergyStorage(IEnergyStorage storage, Supplier<Boolean> allowInsert, Supplier<Boolean> allowExtract, Runnable afterTransfer) implements IEnergyStorage{
+
+		@Override
+		public int receiveEnergy(int maxReceive, boolean simulate){
+			if(!allowInsert.get())
+				return 0;
+			
+			return postTransfer(storage.receiveEnergy(maxReceive, simulate), simulate);
+		}
+
+		@Override
+		public int extractEnergy(int maxExtract, boolean simulate){
+			if(!allowExtract.get())
+				return 0;
+			
+			return postTransfer(storage.extractEnergy(maxExtract, simulate), simulate);
+		}
+
+		@Override
+		public int getEnergyStored(){
+			return storage.getEnergyStored();
+		}
+
+		@Override
+		public int getMaxEnergyStored(){
+			return storage.getMaxEnergyStored();
+		}
+
+		@Override
+		public boolean canExtract(){
+			return allowExtract.get();
+		}
+
+		@Override
+		public boolean canReceive(){
+			return allowInsert.get();
+		}
+		
+		private int postTransfer(int transferred, boolean simulate){
+			if(!simulate && transferred > 0)
+				afterTransfer.run();
+			return transferred;
 		}
 	}
 }

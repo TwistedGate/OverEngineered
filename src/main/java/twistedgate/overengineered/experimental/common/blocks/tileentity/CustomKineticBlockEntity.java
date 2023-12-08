@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -59,10 +58,6 @@ public abstract class CustomKineticBlockEntity extends GeneratingKineticBlockEnt
 	
 	public abstract void readCustom(CompoundTag tag, boolean clientPacket);
 	public abstract void writeCustom(CompoundTag tag, boolean clientPacket);
-	
-	protected ResettableCapability<IEnergyStorage> registerEnergyIO(IEnergyStorage directStorage, Supplier<Boolean> allowInsert, Supplier<Boolean> allowExtract){
-		return registerCapability(new ModeSupportedWrappingEnergyStorage(directStorage, allowInsert, allowExtract, this::setChanged));
-	}
 	
 	// ------------------------------------------------------------
 	// Everything copied from IEBaseBlockEntity is below this point
@@ -245,52 +240,5 @@ public abstract class CustomKineticBlockEntity extends GeneratingKineticBlockEnt
 	}
 	
 	public void setRemovedOE(){
-	}
-	
-	
-	/** This is a modified variant of IE-{@link WrappingEnergyStorage} */
-	public static record ModeSupportedWrappingEnergyStorage(IEnergyStorage storage, Supplier<Boolean> allowInsert, Supplier<Boolean> allowExtract, Runnable afterTransfer) implements IEnergyStorage{
-
-		@Override
-		public int receiveEnergy(int maxReceive, boolean simulate){
-			if(!allowInsert.get())
-				return 0;
-			
-			return postTransfer(storage.receiveEnergy(maxReceive, simulate), simulate);
-		}
-
-		@Override
-		public int extractEnergy(int maxExtract, boolean simulate){
-			if(!allowExtract.get())
-				return 0;
-			
-			return postTransfer(storage.extractEnergy(maxExtract, simulate), simulate);
-		}
-
-		@Override
-		public int getEnergyStored(){
-			return storage.getEnergyStored();
-		}
-
-		@Override
-		public int getMaxEnergyStored(){
-			return storage.getMaxEnergyStored();
-		}
-
-		@Override
-		public boolean canExtract(){
-			return allowExtract.get();
-		}
-
-		@Override
-		public boolean canReceive(){
-			return allowInsert.get();
-		}
-		
-		private int postTransfer(int transferred, boolean simulate){
-			if(!simulate && transferred > 0)
-				afterTransfer.run();
-			return transferred;
-		}
 	}
 }
