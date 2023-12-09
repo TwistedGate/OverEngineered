@@ -6,7 +6,11 @@ import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableSet;
+import com.simibubi.create.foundation.data.CreateRegistrate;
 
+import blusunrize.immersiveengineering.api.IEProperties;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
+import blusunrize.immersiveengineering.common.blocks.MultiblockBEType;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.inventory.MenuType;
@@ -33,6 +37,8 @@ public class OERegisters{
 	private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, OverEngineered.MODID);
 	private static final DeferredRegister<MobEffect> MOB_EFFECT = DeferredRegister.create(ForgeRegistries.MOB_EFFECTS, OverEngineered.MODID);
 	
+	protected static final CreateRegistrate REGISTRATE = CreateRegistrate.create(OverEngineered.MODID);
+	
 	public static void addRegistersToEventBus(IEventBus eventBus){
 		BLOCK_REGISTER.register(eventBus);
 		ITEM_REGISTER.register(eventBus);
@@ -42,10 +48,16 @@ public class OERegisters{
 		MENU_REGISTER.register(eventBus);
 		RECIPE_SERIALIZERS.register(eventBus);
 		MOB_EFFECT.register(eventBus);
+		
+		REGISTRATE.registerEventListeners(eventBus);
 	}
 	
 	protected static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> blockConstructor){
 		return registerBlock(name, blockConstructor, null);
+	}
+	
+	protected static <T extends Block> RegistryObject<T> registerMultiblockBlock(String name, Supplier<T> blockConstructor){
+		return registerBlock(name, blockConstructor, block -> new BlockItem(block, new Item.Properties()));
 	}
 	
 	protected static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> blockConstructor, @Nullable Function<T, ? extends BlockItem> blockItem){
@@ -62,5 +74,9 @@ public class OERegisters{
 	
 	protected static <T extends BlockEntity> RegistryObject<BlockEntityType<T>> registerTE(String name, BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block> valid){
 		return TE_REGISTER.register(name, () -> new BlockEntityType<>(factory, ImmutableSet.of(valid.get()), null));
+	}
+	
+	protected static <T extends BlockEntity & IEBlockInterfaces.IGeneralMultiblock> MultiblockBEType<T> registerMultiblockTE(String name, MultiblockBEType.BEWithTypeConstructor<T> factory, Supplier<? extends Block> valid){
+		return new MultiblockBEType<>(name, TE_REGISTER, factory, valid, state -> state.hasProperty(IEProperties.MULTIBLOCKSLAVE) && !state.getValue(IEProperties.MULTIBLOCKSLAVE));
 	}
 }

@@ -25,6 +25,7 @@ repositories{
 	maven {	name = "BlameJared";	url = "https://maven.blamejared.com/" }         // IE & CT Files
 	maven { name = "DVS1 Maven FS"; url = "https://dvs1.progwml6.com/files/maven" } // JEI & Tinkers Files
 	maven { url = 'https://maven.latmod.com/' }                                     // Needed for JEI
+	maven { name = 'tterrag maven'; url = 'https://maven.tterrag.com/' }
 	
 	flatDir { dir 'flatdir' }
 }
@@ -136,6 +137,10 @@ dependencies{
 	datagenImplementation fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie}:datagen")
 	
 	compileOnly fg.deobf("com.blamejared.crafttweaker:CraftTweaker-forge-1.18.2:${version_ct}")
+	
+	implementation fg.deobf("com.simibubi.create:create-${version_minecraft}:${create_version}:slim") { transitive = false }
+    implementation fg.deobf("com.jozufozu.flywheel:flywheel-forge-${version_minecraft}:${flywheel_version}")
+    implementation fg.deobf("com.tterrag.registrate:Registrate:${registrate_version}")
 	
 	runtimeOnly fg.deobf("mezz.jei:jei-${version_minecraft}:${version_jei}")
 	compileOnly fg.deobf("mezz.jei:jei-${version_minecraft}:${version_jei}:api")
