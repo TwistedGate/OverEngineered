@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import twistedgate.overengineered.OverEngineered;
+import twistedgate.overengineered.common.data.loot.OELootGenerator;
 
 @EventBusSubscriber(modid = OverEngineered.MODID, bus = Bus.MOD)
 public class OEDataGenerator{
@@ -26,6 +27,7 @@ public class OEDataGenerator{
 			OEBlockTags blockTags = new OEBlockTags(generator, exhelper);
 			generator.addProvider(blockTags);
 			generator.addProvider(new OEItemTags(generator, blockTags, exhelper));
+			generator.addProvider(new OELootGenerator(generator));
 			generator.addProvider(new OERecipes(generator));
 		}
 		

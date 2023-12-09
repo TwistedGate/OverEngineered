@@ -53,7 +53,7 @@ public abstract class CustomHorizontalAxisKineticBlock<T extends KineticMultiblo
 	protected int lightOpacity;
 	private final BiFunction<BlockPos, BlockState, T> makeEntity;
 	protected final boolean notNormalBlock;
-	public CustomHorizontalAxisKineticBlock(Properties props, MultiblockBEType<T> entityType){
+	public CustomHorizontalAxisKineticBlock(MultiblockBEType<T> entityType, Properties props){
 		super(props);
 		this.makeEntity = entityType;
 		this.notNormalBlock = !defaultBlockState().canOcclude();

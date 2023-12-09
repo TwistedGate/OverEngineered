@@ -88,15 +88,7 @@ public class UniversalMotorTileEntity extends KineticMultiblockPartTileEntity<Un
 			return master.isMotor();
 		};
 		
-		Runnable setChanged = () -> {
-			UniversalMotorTileEntity master = lazy.orElseGet(null);
-			if(master == null)
-				return;
-			
-			master.setChanged();
-		};
-		
-		return registerCapability(new ModeSupportedWrappingEnergyStorage(directStorage, isMotor, () -> false, setChanged));
+		return registerCapability(new ModeSupportedWrappingEnergyStorage(directStorage, isMotor, () -> false, this::setChanged));
 	}
 	
 	@Override

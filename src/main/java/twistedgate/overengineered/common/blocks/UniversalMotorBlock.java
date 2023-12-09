@@ -8,6 +8,6 @@ import twistedgate.overengineered.common.blocks.tileentity.UniversalMotorTileEnt
 
 public class UniversalMotorBlock extends OEMetalMultiblock<UniversalMotorTileEntity>{
 	public UniversalMotorBlock(){
-		super(OETileTypes.UNIVERSAL_MOTOR, Block.Properties.of(Material.METAL).sound(SoundType.METAL).strength(3, 15));
+		super(OETileTypes.UNIVERSAL_MOTOR, Block.Properties.of(Material.METAL).sound(SoundType.METAL));
 	}
 }

@@ -17,7 +17,7 @@ public abstract class OEMetalMultiblock<T extends KineticMultiblockPartTileEntit
 	private final MultiblockBEType<T> multiblockBEType;
 	
 	public OEMetalMultiblock(MultiblockBEType<T> entityType, Block.Properties props){
-		super(props.requiresCorrectToolForDrops().isViewBlocking((state, blockReader, pos) -> false).noOcclusion(), entityType);
+		super(entityType, props.strength(3, 15).requiresCorrectToolForDrops().isViewBlocking((state, blockReader, pos) -> false).noOcclusion());
 		this.multiblockBEType = entityType;
 	}
 	
