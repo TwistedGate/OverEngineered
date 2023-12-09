@@ -122,6 +122,7 @@ public class UniversalMotorTileEntity extends KineticMultiblockPartTileEntity<Un
 		this.lastEnergyUsed = energy.getFloat("lastused");
 		
 		this.mode = Mode.values()[tag.getInt("mode")];
+		this.generatedSpeed = tag.getInt("generatedspeed");
 	}
 	
 	@Override
@@ -135,6 +136,7 @@ public class UniversalMotorTileEntity extends KineticMultiblockPartTileEntity<Un
 		tag.put("energy", energy);
 		
 		tag.putInt("mode", this.mode.id());
+		tag.putInt("generatedspeed", this.generatedSpeed);
 	}
 	
 	@Override
@@ -203,9 +205,10 @@ public class UniversalMotorTileEntity extends KineticMultiblockPartTileEntity<Un
 		float energyUsed = this.energyStator.extractEnergy(this.energyStator.getMaxEnergyStored(), false) / (float) this.energyStator.getMaxEnergyStored();
 		
 		int energy = energyGeneration(14F, energyUsed);
-		if(this.lastEnergyUsed != energyUsed)
-			updateMasterBlock(null, true);
-		this.lastEnergyUsed = energyUsed;
+		if(this.lastEnergyUsed != energyUsed){
+			this.lastEnergyUsed = energyUsed;
+			setChanged();
+		}
 		
 		BlockEntity te = getLevelNonnull().getBlockEntity(getBlockPosForPos(ENERGY_POS.relative(Direction.UP)));
 		if(te != null){
@@ -213,8 +216,6 @@ public class UniversalMotorTileEntity extends KineticMultiblockPartTileEntity<Un
 				s.receiveEnergy(energy, false);
 			});
 		}
-		
-		setChanged();
 	}
 	
 	@Override
@@ -244,9 +245,9 @@ public class UniversalMotorTileEntity extends KineticMultiblockPartTileEntity<Un
 	private void asMotor(){
 		int amount = this.energyMain.extractEnergy(this.energyMain.getMaxEnergyStored(), false);
 		
-		float f = maxSpeed * (amount / (float) this.energyMain.getMaxEnergyStored());
-		if(this.generatedSpeed != (int) f){
-			this.generatedSpeed = (int) f;
+		int speed = (int) (maxSpeed * (amount / (float) this.energyMain.getMaxEnergyStored()));
+		if(this.generatedSpeed != speed){
+			this.generatedSpeed = speed;
 			
 			updateGeneratedRotation();
 		}
