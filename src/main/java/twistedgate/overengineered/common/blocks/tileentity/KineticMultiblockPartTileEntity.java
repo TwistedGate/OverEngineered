@@ -1,4 +1,4 @@
-package twistedgate.overengineered.experimental.common.blocks.tileentity;
+package twistedgate.overengineered.common.blocks.tileentity;
 
 import java.util.Collection;
 import java.util.Set;

@@ -10,8 +10,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import twistedgate.overengineered.common.blocks.ticking.OECommonTickableTile;
-import twistedgate.overengineered.experimental.common.blocks.CustomHorizontalAxisKineticBlock;
-import twistedgate.overengineered.experimental.common.blocks.tileentity.KineticMultiblockPartTileEntity;
+import twistedgate.overengineered.common.blocks.tileentity.KineticMultiblockPartTileEntity;
 
 public abstract class OEMetalMultiblock<T extends KineticMultiblockPartTileEntity<T> & OECommonTickableTile> extends CustomHorizontalAxisKineticBlock<T>{
 	private final MultiblockBEType<T> multiblockBEType;

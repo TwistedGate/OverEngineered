@@ -1,4 +1,4 @@
-package twistedgate.overengineered.experimental.common.blocks;
+package twistedgate.overengineered.common.blocks;
 
 import java.util.List;
 import java.util.function.BiFunction;
@@ -41,8 +41,8 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.util.LazyOptional;
-import twistedgate.overengineered.experimental.common.blocks.tileentity.CustomKineticBlockEntity;
-import twistedgate.overengineered.experimental.common.blocks.tileentity.KineticMultiblockPartTileEntity;
+import twistedgate.overengineered.common.blocks.tileentity.CustomKineticBlockEntity;
+import twistedgate.overengineered.common.blocks.tileentity.KineticMultiblockPartTileEntity;
 
 /**
  * This has a lot of things copied-pasted from {@link IEMultiblockBlock} and {@link IEEntityBlock}, but only the important bits.

@@ -15,7 +15,7 @@ import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import twistedgate.overengineered.experimental.common.blocks.tileentity.KineticMultiblockPartTileEntity;
+import twistedgate.overengineered.common.blocks.tileentity.KineticMultiblockPartTileEntity;
 import twistedgate.overengineered.utils.ResourceUtils;
 
 public class MBOriginalBlockLootEntry extends LootPoolSingletonContainer{
