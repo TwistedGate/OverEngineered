@@ -49,6 +49,7 @@ public abstract class OETileEntityBase extends BlockEntity{
 	
 	@Override
 	public void saveAdditional(@Nonnull CompoundTag compound){
+		super.saveAdditional(compound);
 		writeCustom(compound);
 	}
 	
