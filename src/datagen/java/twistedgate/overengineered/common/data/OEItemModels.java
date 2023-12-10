@@ -13,7 +13,7 @@ import net.minecraftforge.client.model.generators.ModelBuilder;
 import net.minecraftforge.client.model.generators.loaders.OBJLoaderBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import twistedgate.overengineered.OverEngineered;
-
+import twistedgate.overengineered.common.OEContent;
 
 public class OEItemModels extends ItemModelProvider{
 	public OEItemModels(DataGenerator generator, ExistingFileHelper existingFileHelper){
@@ -22,15 +22,18 @@ public class OEItemModels extends ItemModelProvider{
 	
 	@Override
 	protected void registerModels(){
-//		ModelBuilder<?>.TransformsBuilder trans = model.transforms();
-//		doTransform(trans, TransformType.FIRST_PERSON_LEFT_HAND, new Vector3f(0, 0, 0), new Vector3f(0, 45, 0), 1.0F);
-//		doTransform(trans, TransformType.FIRST_PERSON_RIGHT_HAND, new Vector3f(0, 0, 0), new Vector3f(0, 45, 0), 1.0F);
-//		doTransform(trans, TransformType.THIRD_PERSON_LEFT_HAND, null, null, 1.0F);
-//		doTransform(trans, TransformType.THIRD_PERSON_RIGHT_HAND, null, null, 1.0F);
-//		doTransform(trans, TransformType.HEAD, new Vector3f(0, 0, 0), null, 1.0F);
-//		doTransform(trans, TransformType.GUI, new Vector3f(0, 2, 0), new Vector3f(30, 45, 0), 0.75F);
-//		doTransform(trans, TransformType.GROUND, new Vector3f(0, 0, 0), null, 1.0F);
-//		doTransform(trans, TransformType.FIXED, new Vector3f(0, 0, -7), new Vector3f(-90, 0, 0), 1.0F);
+		ItemModelBuilder model = obj(OEContent.Blocks.BUSBAR.get(), "block/obj/busbar/busbar_a.obj")
+				.texture("texture", modLoc("block/obj/busbar"));
+		
+		ModelBuilder<?>.TransformsBuilder trans = model.transforms();
+		doTransform(trans, TransformType.FIRST_PERSON_LEFT_HAND, new Vector3f(0, 0, 0), new Vector3f(0, 45, 0), 1.0F);
+		doTransform(trans, TransformType.FIRST_PERSON_RIGHT_HAND, new Vector3f(0, 0, 0), new Vector3f(0, 45, 0), 1.0F);
+		doTransform(trans, TransformType.THIRD_PERSON_LEFT_HAND, null, null, 1.0F);
+		doTransform(trans, TransformType.THIRD_PERSON_RIGHT_HAND, null, null, 1.0F);
+		doTransform(trans, TransformType.HEAD, new Vector3f(0, 0, 0), null, 1.0F);
+		doTransform(trans, TransformType.GUI, new Vector3f(0, 2, 0), new Vector3f(30, 45, 0), 0.75F);
+		doTransform(trans, TransformType.GROUND, new Vector3f(0, 0, 0), null, 1.0F);
+		doTransform(trans, TransformType.FIXED, new Vector3f(0, 0, -7), new Vector3f(-90, 0, 0), 1.0F);
 	}
 	
 	private void doTransform(ModelBuilder<?>.TransformsBuilder transform, TransformType type, @Nullable Vector3f translation, @Nullable Vector3f rotationAngle, float scale){

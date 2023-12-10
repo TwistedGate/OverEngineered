@@ -106,8 +106,9 @@ minecraft{
 
 		data{
 			workingDirectory project.file('run')
-			property 'forge.logging.markers', 'REGISTRIES'
-			property 'forge.logging.console.level', 'debug'
+			property 'forge.logging.markers', ''
+			property 'forge.logging.console.level', 'info'
+			property 'fml.earlyprogresswindow', 'false'
 			property 'mixin.env.remapRefMap', 'true'
 			property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 			

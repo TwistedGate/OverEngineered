@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "oe_busbar",
+  "pattern": [
+    "CCC",
+    "MRL"
+  ],
+  "key": {
+    "C": {
+      "item": "minecraft:copper_ingot"
+    },
+    "R": {
+      "item": "minecraft:red_dye"
+    },
+    "L": {
+      "item": "immersiveengineering:connector_lv_relay"
+    },
+    "M": {
+      "item": "immersiveengineering:connector_mv_relay"
+    }
+  },
+  "result": {
+    "item": "overengineered:busbar",
+    "count": 3
+  }
+}

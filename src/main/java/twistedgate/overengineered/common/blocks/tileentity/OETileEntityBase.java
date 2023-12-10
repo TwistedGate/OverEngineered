@@ -13,8 +13,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
-public abstract class BasicTileEntity extends BlockEntity{
-	public BasicTileEntity(BlockEntityType<?> pType, BlockPos pWorldPosition, BlockState pBlockState){
+public abstract class OETileEntityBase extends BlockEntity{
+	public OETileEntityBase(BlockEntityType<?> pType, BlockPos pWorldPosition, BlockState pBlockState){
 		super(pType, pWorldPosition, pBlockState);
 	}
 	
@@ -25,7 +25,7 @@ public abstract class BasicTileEntity extends BlockEntity{
 	
 	@Override
 	public ClientboundBlockEntityDataPacket getUpdatePacket(){
-		return ClientboundBlockEntityDataPacket.create(this, BlockEntity::getUpdateTag);
+		return ClientboundBlockEntityDataPacket.create(this, b -> getUpdateTag());
 	}
 	
 	@Override
@@ -34,6 +34,7 @@ public abstract class BasicTileEntity extends BlockEntity{
 	}
 	
 	@Override
+	@Nonnull
 	public CompoundTag getUpdateTag(){
 		CompoundTag nbt = new CompoundTag();
 		saveAdditional(nbt);
@@ -42,22 +43,23 @@ public abstract class BasicTileEntity extends BlockEntity{
 	
 	@Override
 	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt){
-		load(pkt.getTag());
+		if(pkt.getTag() != null)
+			load(pkt.getTag());
 	}
 	
 	@Override
-	public void saveAdditional(CompoundTag compound){
+	public void saveAdditional(@Nonnull CompoundTag compound){
 		super.saveAdditional(compound);
 		writeCustom(compound);
 	}
 	
 	@Override
-	public void load(CompoundTag compound){
+	public void load(@Nonnull CompoundTag compound){
 		super.load(compound);
 		readCustom(compound);
 	}
 	
-	protected abstract CompoundTag writeCustom(CompoundTag compound);
+	protected abstract void writeCustom(CompoundTag compound);
 	
 	protected abstract void readCustom(CompoundTag compound);
 }
