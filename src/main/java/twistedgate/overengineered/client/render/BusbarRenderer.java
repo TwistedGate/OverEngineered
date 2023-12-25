@@ -85,13 +85,12 @@ public class BusbarRenderer implements BlockEntityRenderer<BusbarTileEntity>{
 		Pose last = matrix.last();
 		VertexConsumer solid = buffer.getBuffer(RenderType.solid());
 		for(BakedQuad quad:quads){
-			float f = quad.getDirection() == Direction.UP ? 1.0F : 0.75F;
-			
-			if(quad.getDirection() == Direction.NORTH || quad.getDirection() == Direction.SOUTH)
-				f = 0.5F;
-			
-			if(quad.getDirection() == Direction.EAST || quad.getDirection() == Direction.WEST)
-				f = 0.6F;
+			float f = switch(quad.getDirection()){
+				case DOWN -> 0.75F;
+				case NORTH, SOUTH -> 0.5F;
+				case EAST, WEST -> 0.6F;
+				default -> 1.0F;
+			};
 			
 			solid.putBulkData(last, quad, f, f, f, light, overlay);
 		}
