@@ -1,236 +1,160 @@
 {
   "variants": {
     "shape=insulators_down_north_south": {
-      "model": "overengineered:block/busbar_with_insulators"
+      "model": "overengineered:block/empty"
     },
     "shape=insulators_down_east_west": {
-      "model": "overengineered:block/busbar_with_insulators",
-      "y": 90
+      "model": "overengineered:block/empty"
     },
     "shape=insulators_up_north_south": {
-      "model": "overengineered:block/busbar_with_insulators",
-      "x": 180
+      "model": "overengineered:block/empty"
     },
     "shape=insulators_up_east_west": {
-      "model": "overengineered:block/busbar_with_insulators",
-      "x": 180,
-      "y": 90
+      "model": "overengineered:block/empty"
     },
     "shape=insulators_north_up_down": {
-      "model": "overengineered:block/busbar_with_insulators",
-      "x": -90
+      "model": "overengineered:block/empty"
     },
     "shape=insulators_east_up_down": {
-      "model": "overengineered:block/busbar_with_insulators",
-      "x": -90,
-      "y": 90
+      "model": "overengineered:block/empty"
     },
     "shape=insulators_south_up_down": {
-      "model": "overengineered:block/busbar_with_insulators",
-      "x": -90,
-      "y": 180
+      "model": "overengineered:block/empty"
     },
     "shape=insulators_west_up_down": {
-      "model": "overengineered:block/busbar_with_insulators",
-      "x": -90,
-      "y": 270
+      "model": "overengineered:block/empty"
     },
     "shape=insulators_north_east_west": {
-      "model": "overengineered:block/busbar_with_insulators_pre_y_rotated",
-      "x": -90
+      "model": "overengineered:block/empty"
     },
     "shape=insulators_east_north_south": {
-      "model": "overengineered:block/busbar_with_insulators_pre_y_rotated",
-      "x": -90,
-      "y": 90
+      "model": "overengineered:block/empty"
     },
     "shape=insulators_south_east_west": {
-      "model": "overengineered:block/busbar_with_insulators_pre_y_rotated",
-      "x": -90,
-      "y": 180
+      "model": "overengineered:block/empty"
     },
     "shape=insulators_west_north_south": {
-      "model": "overengineered:block/busbar_with_insulators_pre_y_rotated",
-      "x": -90,
-      "y": 270
+      "model": "overengineered:block/empty"
     },
     "shape=bend_down_north_east": {
-      "model": "overengineered:block/busbar_bend",
-      "y": 90
+      "model": "overengineered:block/empty"
     },
     "shape=bend_down_east_south": {
-      "model": "overengineered:block/busbar_bend",
-      "y": 180
+      "model": "overengineered:block/empty"
     },
     "shape=bend_down_south_west": {
-      "model": "overengineered:block/busbar_bend",
-      "y": 270
+      "model": "overengineered:block/empty"
     },
     "shape=bend_down_west_north": {
-      "model": "overengineered:block/busbar_bend"
+      "model": "overengineered:block/empty"
     },
     "shape=bend_up_north_east": {
-      "model": "overengineered:block/busbar_bend",
-      "x": 180,
-      "y": 180
+      "model": "overengineered:block/empty"
     },
     "shape=bend_up_east_south": {
-      "model": "overengineered:block/busbar_bend",
-      "x": 180,
-      "y": 270
+      "model": "overengineered:block/empty"
     },
     "shape=bend_up_south_west": {
-      "model": "overengineered:block/busbar_bend",
-      "x": 180
+      "model": "overengineered:block/empty"
     },
     "shape=bend_up_west_north": {
-      "model": "overengineered:block/busbar_bend",
-      "x": 180,
-      "y": 90
+      "model": "overengineered:block/empty"
     },
     "shape=bend_north_down_east": {
-      "model": "overengineered:block/busbar_bend",
-      "x": -90
+      "model": "overengineered:block/empty"
     },
     "shape=bend_north_east_up": {
-      "model": "overengineered:block/busbar_bend",
-      "x": -90,
-      "y": 90
+      "model": "overengineered:block/empty"
     },
     "shape=bend_north_up_west": {
-      "model": "overengineered:block/busbar_bend",
-      "x": -90,
-      "y": 180
+      "model": "overengineered:block/empty"
     },
     "shape=bend_north_west_down": {
-      "model": "overengineered:block/busbar_bend",
-      "x": -90,
-      "y": 270
+      "model": "overengineered:block/empty"
     },
     "shape=bend_east_down_south": {
-      "model": "overengineered:block/busbar_bend",
-      "x": -90
+      "model": "overengineered:block/empty"
     },
     "shape=bend_east_south_up": {
-      "model": "overengineered:block/busbar_bend",
-      "x": -90,
-      "y": 90
+      "model": "overengineered:block/empty"
     },
     "shape=bend_east_up_north": {
-      "model": "overengineered:block/busbar_bend",
-      "x": -90,
-      "y": 180
+      "model": "overengineered:block/empty"
     },
     "shape=bend_east_north_down": {
-      "model": "overengineered:block/busbar_bend",
-      "x": -90,
-      "y": 270
+      "model": "overengineered:block/empty"
     },
     "shape=bend_south_down_west": {
-      "model": "overengineered:block/busbar_bend",
-      "x": -90
+      "model": "overengineered:block/empty"
     },
     "shape=bend_south_west_up": {
-      "model": "overengineered:block/busbar_bend",
-      "x": -90,
-      "y": 90
+      "model": "overengineered:block/empty"
     },
     "shape=bend_south_up_east": {
-      "model": "overengineered:block/busbar_bend",
-      "x": -90,
-      "y": 180
+      "model": "overengineered:block/empty"
     },
     "shape=bend_south_east_down": {
-      "model": "overengineered:block/busbar_bend",
-      "x": -90,
-      "y": 270
+      "model": "overengineered:block/empty"
     },
     "shape=bend_west_down_north": {
-      "model": "overengineered:block/busbar_bend",
-      "x": -90
+      "model": "overengineered:block/empty"
     },
     "shape=bend_west_north_up": {
-      "model": "overengineered:block/busbar_bend",
-      "x": -90,
-      "y": 90
+      "model": "overengineered:block/empty"
     },
     "shape=bend_west_up_south": {
-      "model": "overengineered:block/busbar_bend",
-      "x": -90,
-      "y": 180
+      "model": "overengineered:block/empty"
     },
     "shape=bend_west_south_down": {
-      "model": "overengineered:block/busbar_bend",
-      "x": -90,
-      "y": 270
+      "model": "overengineered:block/empty"
     },
     "shape=edge_inside_down_north_up_south": {
-      "model": "overengineered:block/busbar_horizontal_up",
-      "y": 180
+      "model": "overengineered:block/empty"
     },
     "shape=edge_inside_down_east_up_west": {
-      "model": "overengineered:block/busbar_horizontal_up",
-      "y": 270
+      "model": "overengineered:block/empty"
     },
     "shape=edge_inside_down_south_up_north": {
-      "model": "overengineered:block/busbar_horizontal_up"
+      "model": "overengineered:block/empty"
     },
     "shape=edge_inside_down_west_up_east": {
-      "model": "overengineered:block/busbar_horizontal_up",
-      "y": 90
+      "model": "overengineered:block/empty"
     },
     "shape=edge_inside_up_north_down_south": {
-      "model": "overengineered:block/busbar_horizontal_up",
-      "x": 180
+      "model": "overengineered:block/empty"
     },
     "shape=edge_inside_up_east_down_west": {
-      "model": "overengineered:block/busbar_horizontal_up",
-      "x": 180,
-      "y": 90
+      "model": "overengineered:block/empty"
     },
     "shape=edge_inside_up_south_down_north": {
-      "model": "overengineered:block/busbar_horizontal_up",
-      "x": 180,
-      "y": 180
+      "model": "overengineered:block/empty"
     },
     "shape=edge_inside_up_west_down_east": {
-      "model": "overengineered:block/busbar_horizontal_up",
-      "x": 180,
-      "y": 270
+      "model": "overengineered:block/empty"
     },
     "shape=edge_outside_down_north_up_south": {
-      "model": "overengineered:block/busbar_horizontal_down"
+      "model": "overengineered:block/empty"
     },
     "shape=edge_outside_down_east_up_west": {
-      "model": "overengineered:block/busbar_horizontal_down",
-      "y": 90
+      "model": "overengineered:block/empty"
     },
     "shape=edge_outside_down_south_up_north": {
-      "model": "overengineered:block/busbar_horizontal_down",
-      "y": 180
+      "model": "overengineered:block/empty"
     },
     "shape=edge_outside_down_west_up_east": {
-      "model": "overengineered:block/busbar_horizontal_down",
-      "y": 270
+      "model": "overengineered:block/empty"
     },
     "shape=edge_outside_up_north_down_south": {
-      "model": "overengineered:block/busbar_horizontal_down",
-      "x": 180
+      "model": "overengineered:block/empty"
     },
     "shape=edge_outside_up_east_down_west": {
-      "model": "overengineered:block/busbar_horizontal_down",
-      "x": 180,
-      "y": 90
+      "model": "overengineered:block/empty"
     },
     "shape=edge_outside_up_south_down_north": {
-      "model": "overengineered:block/busbar_horizontal_down",
-      "x": 180,
-      "y": 180
+      "model": "overengineered:block/empty"
     },
     "shape=edge_outside_up_west_down_east": {
-      "model": "overengineered:block/busbar_horizontal_down",
-      "x": 180,
-      "y": 270
+      "model": "overengineered:block/empty"
     }
   }
 }

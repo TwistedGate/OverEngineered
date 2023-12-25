@@ -13,7 +13,6 @@ import net.minecraftforge.client.model.generators.ModelBuilder;
 import net.minecraftforge.client.model.generators.loaders.OBJLoaderBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import twistedgate.overengineered.OverEngineered;
-import twistedgate.overengineered.common.OEContent;
 
 public class OEItemModels extends ItemModelProvider{
 	public OEItemModels(DataGenerator generator, ExistingFileHelper existingFileHelper){
@@ -22,8 +21,10 @@ public class OEItemModels extends ItemModelProvider{
 	
 	@Override
 	protected void registerModels(){
-		ItemModelBuilder model = obj(OEContent.Blocks.BUSBAR.get(), "block/obj/busbar/busbar_a.obj")
-				.texture("texture", modLoc("block/obj/busbar"));
+		ItemModelBuilder model = withExistingParent("busbar", "overengineered:block/busbar/json/busbar_straight");
+		
+//		ItemModelBuilder model = obj(OEContent.Blocks.BUSBAR.get(), "block/busbar/obj/busbar_a.obj")
+//				.texture("texture", modLoc("block/obj/busbar"));
 		
 		ModelBuilder<?>.TransformsBuilder trans = model.transforms();
 		doTransform(trans, TransformType.FIRST_PERSON_LEFT_HAND, new Vector3f(0, 0, 0), new Vector3f(0, 45, 0), 1.0F);
@@ -46,6 +47,7 @@ public class OEItemModels extends ItemModelProvider{
 		trans.end();
 	}
 	
+	@SuppressWarnings("unused")
 	private ItemModelBuilder obj(ItemLike item, String model){
 		return getBuilder(item.asItem().getRegistryName().toString())
 				.customLoader(OBJLoaderBuilder::begin)

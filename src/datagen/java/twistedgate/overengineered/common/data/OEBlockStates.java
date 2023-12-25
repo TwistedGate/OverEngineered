@@ -26,19 +26,40 @@ public class OEBlockStates extends BlockStateProvider{
 		this.exFileHelper = exFileHelper;
 	}
 	
+	private ConfiguredModel emptyModel;
+	
 	@Override
 	protected void registerStatesAndModels(){
+		makeEmpty();
+		
 		busbar();
 	}
 	
 	private void busbar(){
-		// Insulators
-		BlockModelBuilder model_insulators_normal = busModel("models/block/obj/busbar/busbar_a.obj", "_with_insulators");
-		BlockModelBuilder model_insulators_rotated = busModel("models/block/obj/busbar/busbar_a_alt.obj", "_with_insulators_pre_y_rotated");
+		PartialBlockstate state = getVariantBuilder(OEContent.Blocks.BUSBAR.get()).partialState();
 		
-		BlockModelBuilder model_bend = busModel("models/block/obj/busbar/busbar_bend.obj", "_bend");
-		BlockModelBuilder model_edge_inside = busModel("models/block/obj/busbar/busbar_edge_inside.obj", "_horizontal_up");
-		BlockModelBuilder model_edge_outside = busModel("models/block/obj/busbar/busbar_edge_outside.obj", "_horizontal_down");
+		EnumBusbarShape[] shapes = EnumBusbarShape.values();
+		for(EnumBusbarShape shape:shapes){
+			state.with(BusbarBlock.SHAPE, shape).setModels(this.emptyModel);
+		}
+	}
+	
+	private void makeEmpty(){
+		BlockModelBuilder empty = models().getBuilder("empty");
+		this.emptyModel = new ConfiguredModel(empty, 0, 0, false);
+	}
+	
+	/** Keeping it just incase i need something from it */
+	@SuppressWarnings("unused")
+	private final void old(){
+		
+		// Insulators
+		BlockModelBuilder model_insulators_normal = busModel("models/block/busbar/obj/busbar_a.obj", "_with_insulators");
+		BlockModelBuilder model_insulators_rotated = busModel("models/block/busbar/obj/busbar_a_alt.obj", "_with_insulators_pre_y_rotated");
+		
+		BlockModelBuilder model_bend = busModel("models/block/busbar/obj/busbar_bend.obj", "_bend");
+		BlockModelBuilder model_edge_inside = busModel("models/block/busbar/obj/busbar_edge_inside.obj", "_horizontal_up");
+		BlockModelBuilder model_edge_outside = busModel("models/block/busbar/obj/busbar_edge_outside.obj", "_horizontal_down");
 		
 		model_insulators_normal.assertExistence();
 		model_insulators_rotated.assertExistence();
@@ -57,6 +78,8 @@ public class OEBlockStates extends BlockStateProvider{
 		
 		EnumBusbarShape.Type.BENDS_FLOOR.forEachIndexed((i, shape) -> bus(shape, model_bend, 0, 90 + 90 * i));
 		EnumBusbarShape.Type.BENDS_CEILING.forEachIndexed((i, shape) -> bus(shape, model_bend, 180, 180 + 90 * i));
+		
+		// TODO These do not have the correct rotations
 		EnumBusbarShape.Type.BENDS_WALLS.forEachIndexed((i, shape) -> bus(shape, model_bend, -90, 90 * i));
 		
 		EnumBusbarShape.Type.EDGE_INSIDE_FLOOR.forEachIndexed((i, shape) -> bus(shape, model_edge_inside, 0, 90 * i));
@@ -66,8 +89,7 @@ public class OEBlockStates extends BlockStateProvider{
 	}
 	
 	private PartialBlockstate bus(EnumBusbarShape shape, BlockModelBuilder model, int x_rot, int y_rot){
-		VariantBlockStateBuilder builder = getVariantBuilder(OEContent.Blocks.BUSBAR.get());
-		PartialBlockstate state = builder.partialState();
+		PartialBlockstate state = getVariantBuilder(OEContent.Blocks.BUSBAR.get()).partialState();
 		
 		return state.with(BusbarBlock.SHAPE, shape)
 				.addModels(new ConfiguredModel(model, x_rot % 360, y_rot % 360, false));
@@ -87,7 +109,7 @@ public class OEBlockStates extends BlockStateProvider{
 	}
 	
 	private BlockModelBuilder busModel(String modelPath, @Nullable String postFix){
-		return objModel(OEContent.Blocks.BUSBAR.get(), modelPath, postFix, modLoc("block/obj/busbar"));
+		return objModel(OEContent.Blocks.BUSBAR.get(), modelPath, postFix, modLoc("block/busbar/obj"));
 	}
 	
 	private BlockModelBuilder objModel(Block b, String modelPath, @Nullable String postFix, ResourceLocation texture){

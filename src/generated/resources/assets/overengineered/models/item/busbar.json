@@ -1,4 +1,5 @@
 {
+  "parent": "overengineered:block/busbar/json/busbar_straight",
   "display": {
     "firstperson_lefthand": {
       "rotation": [
@@ -43,11 +44,5 @@
         -7
       ]
     }
-  },
-  "textures": {
-    "texture": "overengineered:block/obj/busbar"
-  },
-  "loader": "forge:obj",
-  "model": "overengineered:models/block/obj/busbar/busbar_a.obj",
-  "flip-v": true
+  }
 }

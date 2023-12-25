@@ -1,19 +1,32 @@
 package twistedgate.overengineered.utils.enums;
 
+import static net.minecraft.core.Direction.DOWN;
+import static net.minecraft.core.Direction.EAST;
+import static net.minecraft.core.Direction.NORTH;
+import static net.minecraft.core.Direction.SOUTH;
+import static net.minecraft.core.Direction.UP;
+import static net.minecraft.core.Direction.WEST;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
+
+import javax.annotation.Nullable;
 
 import com.google.common.collect.Iterators;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import twistedgate.overengineered.common.blocks.busbar.BusbarBlock;
 
 /**
  * @author TwistedGate
@@ -21,70 +34,70 @@ import net.minecraft.util.StringRepresentable;
 public enum EnumBusbarShape implements StringRepresentable{
 	// @formatter:off
 	// Straights with Insulators (FACING_FROM_TO)
-	INSULATORS_DOWN_NORTH_SOUTH(Direction.DOWN, Connections.NORTH_SOUTH),
-	INSULATORS_DOWN_EAST_WEST(Direction.DOWN, Connections.EAST_WEST),
-	INSULATORS_UP_NORTH_SOUTH(Direction.UP, Connections.NORTH_SOUTH),
-	INSULATORS_UP_EAST_WEST(Direction.UP, Connections.EAST_WEST),
+	INSULATORS_DOWN_NORTH_SOUTH(DOWN, Connections.NORTH_SOUTH),
+	INSULATORS_DOWN_EAST_WEST(DOWN, Connections.EAST_WEST),
+	INSULATORS_UP_NORTH_SOUTH(UP, Connections.NORTH_SOUTH),
+	INSULATORS_UP_EAST_WEST(UP, Connections.EAST_WEST),
 	
-	INSULATORS_NORTH_UP_DOWN(Direction.NORTH, Connections.UP_DOWN),
-	INSULATORS_EAST_UP_DOWN(Direction.EAST, Connections.UP_DOWN),
-	INSULATORS_SOUTH_UP_DOWN(Direction.SOUTH, Connections.UP_DOWN),
-	INSULATORS_WEST_UP_DOWN(Direction.WEST, Connections.UP_DOWN),
-	INSULATORS_NORTH_EAST_WEST(Direction.NORTH, Connections.EAST_WEST),
-	INSULATORS_EAST_NORTH_SOUTH(Direction.EAST, Connections.NORTH_SOUTH),
-	INSULATORS_SOUTH_EAST_WEST(Direction.SOUTH, Connections.EAST_WEST),
-	INSULATORS_WEST_NORTH_SOUTH(Direction.WEST, Connections.NORTH_SOUTH),
+	INSULATORS_NORTH_UP_DOWN(NORTH, Connections.UP_DOWN),
+	INSULATORS_EAST_UP_DOWN(EAST, Connections.UP_DOWN),
+	INSULATORS_SOUTH_UP_DOWN(SOUTH, Connections.UP_DOWN),
+	INSULATORS_WEST_UP_DOWN(WEST, Connections.UP_DOWN),
+	INSULATORS_NORTH_EAST_WEST(NORTH, Connections.EAST_WEST),
+	INSULATORS_EAST_NORTH_SOUTH(EAST, Connections.NORTH_SOUTH),
+	INSULATORS_SOUTH_EAST_WEST(SOUTH, Connections.EAST_WEST),
+	INSULATORS_WEST_NORTH_SOUTH(WEST, Connections.NORTH_SOUTH),
 	
 	// 90° Bends (FACING_FROM_TO)
-	BEND_DOWN_NORTH_EAST(Direction.DOWN, Connections.NORTH_EAST),
-	BEND_DOWN_EAST_SOUTH(Direction.DOWN, Connections.EAST_SOUTH),
-	BEND_DOWN_SOUTH_WEST(Direction.DOWN, Connections.SOUTH_WEST),
-	BEND_DOWN_WEST_NORTH(Direction.DOWN, Connections.WEST_NORTH),
+	BEND_DOWN_NORTH_EAST(DOWN, Connections.NORTH_EAST),
+	BEND_DOWN_EAST_SOUTH(DOWN, Connections.EAST_SOUTH),
+	BEND_DOWN_SOUTH_WEST(DOWN, Connections.SOUTH_WEST),
+	BEND_DOWN_WEST_NORTH(DOWN, Connections.WEST_NORTH),
 	
-	BEND_UP_NORTH_EAST(Direction.UP, Connections.NORTH_EAST),
-	BEND_UP_EAST_SOUTH(Direction.UP, Connections.EAST_SOUTH),
-	BEND_UP_SOUTH_WEST(Direction.UP, Connections.SOUTH_WEST),
-	BEND_UP_WEST_NORTH(Direction.UP, Connections.WEST_NORTH),
+	BEND_UP_NORTH_EAST(UP, Connections.NORTH_EAST),
+	BEND_UP_EAST_SOUTH(UP, Connections.EAST_SOUTH),
+	BEND_UP_SOUTH_WEST(UP, Connections.SOUTH_WEST),
+	BEND_UP_WEST_NORTH(UP, Connections.WEST_NORTH),
 	
-	BEND_NORTH_DOWN_EAST(Direction.NORTH, Connections.DOWN_EAST),
-	BEND_NORTH_EAST_UP(Direction.NORTH, Connections.UP_EAST),
-	BEND_NORTH_UP_WEST(Direction.NORTH, Connections.UP_WEST),
-	BEND_NORTH_WEST_DOWN(Direction.NORTH, Connections.DOWN_WEST),
+	BEND_NORTH_DOWN_EAST(NORTH, Connections.DOWN_EAST),
+	BEND_NORTH_EAST_UP(NORTH, Connections.UP_EAST),
+	BEND_NORTH_UP_WEST(NORTH, Connections.UP_WEST),
+	BEND_NORTH_WEST_DOWN(NORTH, Connections.DOWN_WEST),
 	
-	BEND_EAST_DOWN_SOUTH(Direction.EAST, Connections.DOWN_SOUTH),
-	BEND_EAST_SOUTH_UP(Direction.EAST, Connections.UP_SOUTH),
-	BEND_EAST_UP_NORTH(Direction.EAST, Connections.UP_NORTH),
-	BEND_EAST_NORTH_DOWN(Direction.EAST, Connections.DOWN_NORTH),
+	BEND_EAST_DOWN_SOUTH(EAST, Connections.DOWN_SOUTH),
+	BEND_EAST_SOUTH_UP(EAST, Connections.UP_SOUTH),
+	BEND_EAST_UP_NORTH(EAST, Connections.UP_NORTH),
+	BEND_EAST_NORTH_DOWN(EAST, Connections.DOWN_NORTH),
 	
-	BEND_SOUTH_DOWN_WEST(Direction.SOUTH, Connections.DOWN_WEST),
-	BEND_SOUTH_WEST_UP(Direction.SOUTH, Connections.UP_WEST),
-	BEND_SOUTH_UP_EAST(Direction.SOUTH, Connections.UP_EAST),
-	BEND_SOUTH_EAST_DOWN(Direction.SOUTH, Connections.DOWN_EAST),
+	BEND_SOUTH_DOWN_WEST(SOUTH, Connections.DOWN_WEST),
+	BEND_SOUTH_WEST_UP(SOUTH, Connections.UP_WEST),
+	BEND_SOUTH_UP_EAST(SOUTH, Connections.UP_EAST),
+	BEND_SOUTH_EAST_DOWN(SOUTH, Connections.DOWN_EAST),
 	
-	BEND_WEST_DOWN_NORTH(Direction.WEST, Connections.DOWN_NORTH),
-	BEND_WEST_NORTH_UP(Direction.WEST, Connections.UP_NORTH),
-	BEND_WEST_UP_SOUTH(Direction.WEST, Connections.UP_SOUTH),
-	BEND_WEST_SOUTH_DOWN(Direction.WEST, Connections.DOWN_SOUTH),
+	BEND_WEST_DOWN_NORTH(WEST, Connections.DOWN_NORTH),
+	BEND_WEST_NORTH_UP(WEST, Connections.UP_NORTH),
+	BEND_WEST_UP_SOUTH(WEST, Connections.UP_SOUTH),
+	BEND_WEST_SOUTH_DOWN(WEST, Connections.DOWN_SOUTH),
 	
 	// Inside Edges (FACING_SIDE_FROM_TO)
-	EDGE_INSIDE_DOWN_NORTH_UP_SOUTH	(Direction.DOWN, Connections.UP_SOUTH),
-	EDGE_INSIDE_DOWN_EAST_UP_WEST	(Direction.DOWN, Connections.UP_WEST),
-	EDGE_INSIDE_DOWN_SOUTH_UP_NORTH	(Direction.DOWN, Connections.UP_NORTH),
-	EDGE_INSIDE_DOWN_WEST_UP_EAST	(Direction.DOWN, Connections.UP_EAST),
-	EDGE_INSIDE_UP_NORTH_DOWN_SOUTH	(Direction.UP, Connections.DOWN_SOUTH),
-	EDGE_INSIDE_UP_EAST_DOWN_WEST	(Direction.UP, Connections.DOWN_WEST),
-	EDGE_INSIDE_UP_SOUTH_DOWN_NORTH	(Direction.UP, Connections.DOWN_NORTH),
-	EDGE_INSIDE_UP_WEST_DOWN_EAST	(Direction.UP, Connections.DOWN_EAST),
+	EDGE_INSIDE_DOWN_NORTH_UP_SOUTH	(DOWN, Connections.UP_SOUTH),
+	EDGE_INSIDE_DOWN_EAST_UP_WEST	(DOWN, Connections.UP_WEST),
+	EDGE_INSIDE_DOWN_SOUTH_UP_NORTH	(DOWN, Connections.UP_NORTH),
+	EDGE_INSIDE_DOWN_WEST_UP_EAST	(DOWN, Connections.UP_EAST),
+	EDGE_INSIDE_UP_NORTH_DOWN_SOUTH	(UP, Connections.DOWN_SOUTH),
+	EDGE_INSIDE_UP_EAST_DOWN_WEST	(UP, Connections.DOWN_WEST),
+	EDGE_INSIDE_UP_SOUTH_DOWN_NORTH	(UP, Connections.DOWN_NORTH),
+	EDGE_INSIDE_UP_WEST_DOWN_EAST	(UP, Connections.DOWN_EAST),
 	
 	// Outside Edges (FACING_SIDE_FROM_TO)
-	EDGE_OUTSIDE_DOWN_NORTH_UP_SOUTH(Direction.DOWN, Connections.UP_SOUTH),
-	EDGE_OUTSIDE_DOWN_EAST_UP_WEST	(Direction.DOWN, Connections.UP_WEST),
-	EDGE_OUTSIDE_DOWN_SOUTH_UP_NORTH(Direction.DOWN, Connections.UP_NORTH),
-	EDGE_OUTSIDE_DOWN_WEST_UP_EAST	(Direction.DOWN, Connections.UP_EAST),
-	EDGE_OUTSIDE_UP_NORTH_DOWN_SOUTH(Direction.UP, Connections.DOWN_SOUTH),
-	EDGE_OUTSIDE_UP_EAST_DOWN_WEST	(Direction.UP, Connections.DOWN_WEST),
-	EDGE_OUTSIDE_UP_SOUTH_DOWN_NORTH(Direction.UP, Connections.DOWN_NORTH),
-	EDGE_OUTSIDE_UP_WEST_DOWN_EAST	(Direction.UP, Connections.DOWN_EAST),
+	EDGE_OUTSIDE_DOWN_NORTH_UP_SOUTH(DOWN, Connections.UP_SOUTH),
+	EDGE_OUTSIDE_DOWN_EAST_UP_WEST	(DOWN, Connections.UP_WEST),
+	EDGE_OUTSIDE_DOWN_SOUTH_UP_NORTH(DOWN, Connections.UP_NORTH),
+	EDGE_OUTSIDE_DOWN_WEST_UP_EAST	(DOWN, Connections.UP_EAST),
+	EDGE_OUTSIDE_UP_NORTH_DOWN_SOUTH(UP, Connections.DOWN_SOUTH),
+	EDGE_OUTSIDE_UP_EAST_DOWN_WEST	(UP, Connections.DOWN_WEST),
+	EDGE_OUTSIDE_UP_SOUTH_DOWN_NORTH(UP, Connections.DOWN_NORTH),
+	EDGE_OUTSIDE_UP_WEST_DOWN_EAST	(UP, Connections.DOWN_EAST),
 	;
 	// @formatter:on
 	
@@ -103,6 +116,38 @@ public enum EnumBusbarShape implements StringRepresentable{
 		this.connections = cons;
 	}
 	
+	public boolean hasFreeConnectionPoint(Level level, BlockPos pos){
+		boolean ret = false;
+		for(Direction d:this.connections.points){
+			BlockState state = level.getBlockState(pos.relative(d));
+			if(!(state.getBlock() instanceof BusbarBlock)){
+				ret |= true;
+			}
+		}
+		return ret;
+	}
+	
+	/**
+	 * 
+	 * @param level
+	 * @param source Position from which this method was called
+	 * @param selfPos The current position
+	 * @return if the current shape points back to source
+	 */
+	public boolean pointsBack(Level level, BlockPos source, BlockPos selfPos){
+		BlockState state = level.getBlockState(selfPos);
+		if(!(state.getBlock() instanceof BusbarBlock))
+			return false;
+		
+		// Do any of the points, point back to source?
+		for(Direction p:this.connections.points){
+			if(selfPos.relative(p).equals(source))
+				return true;
+		}
+		
+		return false;
+	}
+	
 	public void connectionOffsets(final List<BlockPos> list, BlockPos pos){
 		for(Direction p:this.connections.points){
 			list.add(pos.relative(p));
@@ -118,25 +163,147 @@ public enum EnumBusbarShape implements StringRepresentable{
 		return this.connections.compatibleWith(other.connections);
 	}
 	
+	// STATIC STUFF
+	
+	private static boolean checkBothWaysSided(Direction side, Direction from, Direction to, Direction a, Direction b, Direction c){
+		return side == a && checkBothWays(from, to, a, b);
+	}
+	
+	private static boolean checkBothWays(Direction from, Direction to, Direction a, Direction b){
+		return (from == a && to == b) || (from == b && to == a);
+	}
+	
+	@Nullable
+	public static EnumBusbarShape get(Direction facing, Direction from, Direction to){
+		return get(facing, null, from, to);
+	}
+	
+	@Nullable
+	public static EnumBusbarShape get(Direction facing, @Nullable Direction side, Direction from, Direction to){
+		Objects.requireNonNull(facing, "\"Facing\" must not be Null.");
+		Objects.requireNonNull(from, "\"From\" must not be Null.");
+		Objects.requireNonNull(to, "\"To\" must not be Null.");
+		
+		// Straights with Insulators (FACING_FROM_TO)
+		switch(facing){
+			case UP -> {
+				if(checkBothWays(from, to, NORTH, SOUTH)) return INSULATORS_UP_NORTH_SOUTH;
+				if(checkBothWays(from, to, EAST, WEST)) return INSULATORS_UP_EAST_WEST;
+			}
+			case DOWN -> {
+				if(checkBothWays(from, to, NORTH, SOUTH)) return INSULATORS_DOWN_NORTH_SOUTH;
+				if(checkBothWays(from, to, EAST, WEST)) return INSULATORS_DOWN_EAST_WEST;
+			}
+			case NORTH -> {
+				if(checkBothWays(from, to, UP, DOWN)) return INSULATORS_NORTH_UP_DOWN;
+				if(checkBothWays(from, to, EAST, WEST)) return INSULATORS_NORTH_EAST_WEST;
+			}
+			case EAST -> {
+				if(checkBothWays(from, to, UP, DOWN)) return INSULATORS_EAST_UP_DOWN;
+				if(checkBothWays(from, to, NORTH, SOUTH)) return INSULATORS_EAST_NORTH_SOUTH;
+			}
+			case SOUTH -> {
+				if(checkBothWays(from, to, UP, DOWN)) return INSULATORS_SOUTH_UP_DOWN;
+				if(checkBothWays(from, to, EAST, WEST)) return INSULATORS_SOUTH_EAST_WEST;
+			}
+			case WEST -> {
+				if(checkBothWays(from, to, UP, DOWN)) return INSULATORS_WEST_UP_DOWN;
+				if(checkBothWays(from, to, NORTH, SOUTH)) return INSULATORS_WEST_NORTH_SOUTH;
+			}
+		}
+		
+		// 90° Bends (FACING_FROM_TO)
+		switch(facing){
+			case UP -> {
+				if(checkBothWays(from, to, NORTH, EAST)) return BEND_UP_NORTH_EAST;
+				if(checkBothWays(from, to, EAST, SOUTH)) return BEND_UP_EAST_SOUTH;
+				if(checkBothWays(from, to, SOUTH, WEST)) return BEND_UP_SOUTH_WEST;
+				if(checkBothWays(from, to, WEST, NORTH)) return BEND_UP_WEST_NORTH;
+			}
+			case DOWN -> {
+				if(checkBothWays(from, to, NORTH, EAST)) return BEND_DOWN_NORTH_EAST;
+				if(checkBothWays(from, to, EAST, SOUTH)) return BEND_DOWN_EAST_SOUTH;
+				if(checkBothWays(from, to, SOUTH, WEST)) return BEND_DOWN_SOUTH_WEST;
+				if(checkBothWays(from, to, WEST, NORTH)) return BEND_DOWN_WEST_NORTH;
+			}
+			case NORTH -> {
+				if(checkBothWays(from, to, DOWN, EAST)) return BEND_NORTH_DOWN_EAST;
+				if(checkBothWays(from, to, EAST, UP)) return BEND_NORTH_EAST_UP;
+				if(checkBothWays(from, to, UP, WEST)) return BEND_NORTH_UP_WEST;
+				if(checkBothWays(from, to, WEST, DOWN)) return BEND_NORTH_WEST_DOWN;
+			}
+			case EAST -> {
+				if(checkBothWays(from, to, DOWN, SOUTH)) return BEND_EAST_DOWN_SOUTH;
+				if(checkBothWays(from, to, SOUTH, UP)) return BEND_EAST_SOUTH_UP;
+				if(checkBothWays(from, to, UP, NORTH)) return BEND_EAST_UP_NORTH;
+				if(checkBothWays(from, to, NORTH, DOWN)) return BEND_EAST_NORTH_DOWN;
+			}
+			case SOUTH -> {
+				if(checkBothWays(from, to, DOWN, WEST)) return BEND_SOUTH_DOWN_WEST;
+				if(checkBothWays(from, to, WEST, UP)) return BEND_SOUTH_WEST_UP;
+				if(checkBothWays(from, to, UP, EAST)) return BEND_SOUTH_UP_EAST;
+				if(checkBothWays(from, to, EAST, DOWN)) return BEND_SOUTH_EAST_DOWN;
+			}
+			case WEST -> {
+				if(checkBothWays(from, to, DOWN, NORTH)) return BEND_WEST_DOWN_NORTH;
+				if(checkBothWays(from, to, NORTH, UP)) return BEND_WEST_NORTH_UP;
+				if(checkBothWays(from, to, UP, SOUTH)) return BEND_WEST_UP_SOUTH;
+				if(checkBothWays(from, to, SOUTH, DOWN)) return BEND_WEST_SOUTH_DOWN;
+			}
+		}
+		
+		// Inside/Outside Edges (FACING_SIDE_FROM_TO)
+		if(side != null){
+			switch(facing){
+				case UP -> {
+					if(checkBothWaysSided(side, from, to, NORTH, DOWN, SOUTH)) return EDGE_INSIDE_UP_NORTH_DOWN_SOUTH;
+					if(checkBothWaysSided(side, from, to, EAST, DOWN, WEST)) return EDGE_INSIDE_UP_EAST_DOWN_WEST;
+					if(checkBothWaysSided(side, from, to, SOUTH, DOWN, NORTH)) return EDGE_INSIDE_UP_SOUTH_DOWN_NORTH;
+					if(checkBothWaysSided(side, from, to, WEST, DOWN, EAST)) return EDGE_INSIDE_UP_WEST_DOWN_EAST;
+					
+					if(checkBothWaysSided(side, from, to, NORTH, UP, SOUTH)) return EDGE_OUTSIDE_DOWN_NORTH_UP_SOUTH;
+					if(checkBothWaysSided(side, from, to, EAST, UP, WEST)) return EDGE_OUTSIDE_DOWN_EAST_UP_WEST;
+					if(checkBothWaysSided(side, from, to, SOUTH, UP, NORTH)) return EDGE_OUTSIDE_DOWN_SOUTH_UP_NORTH;
+					if(checkBothWaysSided(side, from, to, WEST, UP, EAST)) return EDGE_OUTSIDE_DOWN_WEST_UP_EAST;
+				}
+				case DOWN -> {
+					if(checkBothWaysSided(side, from, to, NORTH, UP, SOUTH)) return EDGE_INSIDE_DOWN_NORTH_UP_SOUTH;
+					if(checkBothWaysSided(side, from, to, EAST, UP, WEST)) return EDGE_INSIDE_DOWN_EAST_UP_WEST;
+					if(checkBothWaysSided(side, from, to, SOUTH, UP, NORTH)) return EDGE_INSIDE_DOWN_SOUTH_UP_NORTH;
+					if(checkBothWaysSided(side, from, to, WEST, UP, EAST)) return EDGE_INSIDE_DOWN_WEST_UP_EAST;
+					
+					if(checkBothWaysSided(side, from, to, NORTH, DOWN, SOUTH)) return EDGE_OUTSIDE_UP_NORTH_DOWN_SOUTH;
+					if(checkBothWaysSided(side, from, to, EAST, DOWN, WEST)) return EDGE_OUTSIDE_UP_EAST_DOWN_WEST;
+					if(checkBothWaysSided(side, from, to, SOUTH, DOWN, NORTH)) return EDGE_OUTSIDE_UP_SOUTH_DOWN_NORTH;
+					if(checkBothWaysSided(side, from, to, WEST, DOWN, EAST)) return EDGE_OUTSIDE_UP_WEST_DOWN_EAST;
+				}
+				case NORTH, EAST, SOUTH, WEST -> {
+				}
+			}
+		}
+		
+		return null;
+	}
+	
 	public static enum Connections{
-		NORTH_SOUTH(Direction.NORTH, Direction.SOUTH),
-		EAST_WEST(Direction.EAST, Direction.WEST),
-		UP_DOWN(Direction.UP, Direction.DOWN),
+		NORTH_SOUTH(NORTH, SOUTH),
+		EAST_WEST(EAST, WEST),
+		UP_DOWN(UP, DOWN),
 		
-		NORTH_EAST(Direction.NORTH, Direction.EAST),
-		EAST_SOUTH(Direction.EAST, Direction.SOUTH),
-		SOUTH_WEST(Direction.SOUTH, Direction.WEST),
-		WEST_NORTH(Direction.WEST, Direction.NORTH),
+		NORTH_EAST(NORTH, EAST),
+		EAST_SOUTH(EAST, SOUTH),
+		SOUTH_WEST(SOUTH, WEST),
+		WEST_NORTH(WEST, NORTH),
 		
-		UP_NORTH(Direction.UP, Direction.NORTH),
-		UP_EAST(Direction.UP, Direction.EAST),
-		UP_SOUTH(Direction.UP, Direction.SOUTH),
-		UP_WEST(Direction.UP, Direction.WEST),
+		UP_NORTH(UP, NORTH),
+		UP_EAST(UP, EAST),
+		UP_SOUTH(UP, SOUTH),
+		UP_WEST(UP, WEST),
 		
-		DOWN_NORTH(Direction.DOWN, Direction.NORTH),
-		DOWN_EAST(Direction.DOWN, Direction.EAST),
-		DOWN_SOUTH(Direction.DOWN, Direction.SOUTH),
-		DOWN_WEST(Direction.DOWN, Direction.WEST)
+		DOWN_NORTH(DOWN, NORTH),
+		DOWN_EAST(DOWN, EAST),
+		DOWN_SOUTH(DOWN, SOUTH),
+		DOWN_WEST(DOWN, WEST)
 		;
 		
 		final Direction[] points;
