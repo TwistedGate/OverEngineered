@@ -66,10 +66,11 @@ public class BusbarRenderer implements BlockEntityRenderer<BusbarTileEntity>{
 	public void render(BusbarTileEntity blockEntity, float partialTick, PoseStack matrix, MultiBufferSource buffer, int light, int overlay){
 		matrix.pushPose();
 		{
-			// TODO EnumBusbarShape dependant Rotation (& Translation since origin is not centered)
+			matrix.translate(0.5, 0.5, 0.5);
 			
-			matrix.translate(0, 0, 1);
-			matrix.mulPose(new Quaternion(Vector3f.YP, 90.0F, true));
+			// TODO EnumBusbarShape dependant Rotation
+			
+			matrix.mulPose(new Quaternion(Vector3f.YP, 0.0F, true));
 			
 			renderModel(MODEL_BUSBAR_STRAIGHT, matrix, buffer, light, overlay);
 		}

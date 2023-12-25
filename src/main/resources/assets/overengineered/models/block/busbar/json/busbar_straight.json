@@ -1,6 +1,6 @@
 {
 	"loader": "forge:obj",
-	"model": "overengineered:models/block/busbar/obj/busbar_a.obj",
+	"model": "overengineered:models/block/busbar/obj/busbar.obj",
     "textures": {
       "texture": "overengineered:block/obj/busbar",
       "particle": "overengineered:block/obj/busbar"
