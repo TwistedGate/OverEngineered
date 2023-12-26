@@ -316,25 +316,25 @@ public class BusbarBlock extends OEBlockBase implements EntityBlock{
 				case BEND_UP_SOUTH_WEST -> Shapes.create(0.0, 0.75, 0.125, 0.875, 1.0, 1.0);
 				case BEND_UP_WEST_NORTH -> Shapes.create(0.0, 0.75, 0.0, 0.875, 1.0, 0.875);
 				
-				case BEND_NORTH_DOWN_EAST -> Shapes.create(0.125, 0.125, 0.0, 1.0, 1.0, 0.25);
-				case BEND_NORTH_EAST_UP -> Shapes.create(0.125, 0.0, 0.0, 1.0, 0.875, 0.25);
+				case BEND_NORTH_DOWN_EAST -> Shapes.create(0.125, 0.0, 0.0, 1.0, 0.875, 0.25);
+				case BEND_NORTH_EAST_UP -> Shapes.create(0.125, 0.125, 0.0, 1.0, 1.0, 0.25);
 				case BEND_NORTH_UP_WEST -> Shapes.create(0.0, 0.125, 0.0, 0.875, 1.0, 0.25);
-				case BEND_NORTH_WEST_DOWN -> Shapes.create(0.0, 0.125, 0.0, 0.875, 1.0, 0.25);
+				case BEND_NORTH_WEST_DOWN -> Shapes.create(0.0, 0.0, 0.0, 0.875, 0.875, 0.25);
 				
-				case BEND_EAST_DOWN_SOUTH -> Shapes.create(0.75, 0.125, 0.0, 1.0, 1.0, 0.875);
-				case BEND_EAST_SOUTH_UP -> Shapes.create(0.75, 0.125, 0.0, 1.0, 1.0, 0.875);
+				case BEND_EAST_DOWN_SOUTH -> Shapes.create(0.75, 0.0, 0.125, 1.0, 0.875, 1.0);
+				case BEND_EAST_SOUTH_UP -> Shapes.create(0.75, 0.125, 0.125, 1.0, 1.0, 1.0);
 				case BEND_EAST_UP_NORTH -> Shapes.create(0.75, 0.125, 0.0, 1.0, 1.0, 0.875);
-				case BEND_EAST_NORTH_DOWN -> Shapes.create(0.75, 0.125, 0.0, 1.0, 1.0, 0.875);
+				case BEND_EAST_NORTH_DOWN -> Shapes.create(0.75, 0.0, 0.0, 1.0, 0.875, 0.875);
 				
-				case BEND_SOUTH_DOWN_WEST -> Shapes.create(0.125, 0.125, 0.75, 1.0, 1.0, 1.0);
-				case BEND_SOUTH_WEST_UP -> Shapes.create(0.125, 0.125, 0.75, 1.0, 1.0, 1.0);
+				case BEND_SOUTH_DOWN_WEST -> Shapes.create(0.0, 0.0, 0.75, 0.875, 0.875, 1.0);
+				case BEND_SOUTH_WEST_UP -> Shapes.create(0.0, 0.125, 0.75, 0.875, 1.0, 1.0);
 				case BEND_SOUTH_UP_EAST -> Shapes.create(0.125, 0.125, 0.75, 1.0, 1.0, 1.0);
-				case BEND_SOUTH_EAST_DOWN -> Shapes.create(0.125, 0.125, 0.75, 1.0, 1.0, 1.0);
+				case BEND_SOUTH_EAST_DOWN -> Shapes.create(0.125, 0.0, 0.75, 1.0, 0.875, 1.0);
 				
-				case BEND_WEST_DOWN_NORTH -> Shapes.create(0.0, 0.125, 0.125, 0.25, 1.0, 1.0);
-				case BEND_WEST_NORTH_UP -> Shapes.create(0.0, 0.125, 0.125, 0.25, 1.0, 1.0);
+				case BEND_WEST_DOWN_NORTH -> Shapes.create(0.0, 0.0, 0.0, 0.25, 0.875, 0.875);
+				case BEND_WEST_NORTH_UP -> Shapes.create(0.0, 0.125, 0.0, 0.25, 1.0, 0.875);
 				case BEND_WEST_UP_SOUTH -> Shapes.create(0.0, 0.125, 0.125, 0.25, 1.0, 1.0);
-				case BEND_WEST_SOUTH_DOWN -> Shapes.create(0.0, 0.125, 0.125, 0.25, 1.0, 1.0);
+				case BEND_WEST_SOUTH_DOWN -> Shapes.create(0.0, 0.0, 0.125, 0.25, 0.875, 1.0);
 				
 				case EDGE_OUTSIDE_DOWN_NORTH_UP_SOUTH -> Shapes.create(0.125, 0.0, 0.75, 0.875, 0.25, 1.0);
 				case EDGE_OUTSIDE_DOWN_EAST_UP_WEST -> Shapes.create(0.0, 0.0, 0.125, 0.25, 0.25, 0.875);
