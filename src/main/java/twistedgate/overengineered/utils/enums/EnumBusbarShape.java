@@ -15,17 +15,24 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
 import com.google.common.collect.Iterators;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import twistedgate.overengineered.common.blocks.busbar.BusbarBlock;
 
 /**
@@ -34,86 +41,125 @@ import twistedgate.overengineered.common.blocks.busbar.BusbarBlock;
 public enum EnumBusbarShape implements StringRepresentable{
 	// @formatter:off
 	// Straights with Insulators (FACING_FROM_TO)
-	INSULATORS_DOWN_NORTH_SOUTH(DOWN, Connections.NORTH_SOUTH),
-	INSULATORS_DOWN_EAST_WEST(DOWN, Connections.EAST_WEST),
-	INSULATORS_UP_NORTH_SOUTH(UP, Connections.NORTH_SOUTH),
-	INSULATORS_UP_EAST_WEST(UP, Connections.EAST_WEST),
+	INSULATORS_DOWN_NORTH_SOUTH(DOWN, Connections.NORTH_SOUTH,	new Vec3i(0, 0, 0)),
+	INSULATORS_DOWN_EAST_WEST(DOWN, Connections.EAST_WEST,		new Vec3i(0, 90, 0)),
+	INSULATORS_UP_NORTH_SOUTH(UP, Connections.NORTH_SOUTH,		new Vec3i(180, 0, 0)),
+	INSULATORS_UP_EAST_WEST(UP, Connections.EAST_WEST,			new Vec3i(180, 90, 0)),
 	
-	INSULATORS_NORTH_UP_DOWN(NORTH, Connections.UP_DOWN),
-	INSULATORS_EAST_UP_DOWN(EAST, Connections.UP_DOWN),
-	INSULATORS_SOUTH_UP_DOWN(SOUTH, Connections.UP_DOWN),
-	INSULATORS_WEST_UP_DOWN(WEST, Connections.UP_DOWN),
-	INSULATORS_NORTH_EAST_WEST(NORTH, Connections.EAST_WEST),
-	INSULATORS_EAST_NORTH_SOUTH(EAST, Connections.NORTH_SOUTH),
-	INSULATORS_SOUTH_EAST_WEST(SOUTH, Connections.EAST_WEST),
-	INSULATORS_WEST_NORTH_SOUTH(WEST, Connections.NORTH_SOUTH),
+	INSULATORS_NORTH_UP_DOWN(NORTH, Connections.UP_DOWN,		new Vec3i(90, 0, 0)),
+	INSULATORS_EAST_UP_DOWN(EAST, Connections.UP_DOWN,			new Vec3i(90, 270, 0)),
+	INSULATORS_SOUTH_UP_DOWN(SOUTH, Connections.UP_DOWN,		new Vec3i(90, 180, 0)),
+	INSULATORS_WEST_UP_DOWN(WEST, Connections.UP_DOWN,			new Vec3i(90, 90, 0)),
+	INSULATORS_NORTH_EAST_WEST(NORTH, Connections.EAST_WEST,	new Vec3i(90, 0, 90)),
+	INSULATORS_EAST_NORTH_SOUTH(EAST, Connections.NORTH_SOUTH,	new Vec3i(90, 270, 90)),
+	INSULATORS_SOUTH_EAST_WEST(SOUTH, Connections.EAST_WEST,	new Vec3i(90, 180, 90)),
+	INSULATORS_WEST_NORTH_SOUTH(WEST, Connections.NORTH_SOUTH,	new Vec3i(90, 90, 90)),
 	
 	// 90° Bends (FACING_FROM_TO)
-	BEND_DOWN_NORTH_EAST(DOWN, Connections.NORTH_EAST),
-	BEND_DOWN_EAST_SOUTH(DOWN, Connections.EAST_SOUTH),
-	BEND_DOWN_SOUTH_WEST(DOWN, Connections.SOUTH_WEST),
-	BEND_DOWN_WEST_NORTH(DOWN, Connections.WEST_NORTH),
+	BEND_DOWN_NORTH_EAST(DOWN, Connections.NORTH_EAST,			new Vec3i(0, 270, 0)),
+	BEND_DOWN_EAST_SOUTH(DOWN, Connections.EAST_SOUTH,			new Vec3i(0, 180, 0)),
+	BEND_DOWN_SOUTH_WEST(DOWN, Connections.SOUTH_WEST,			new Vec3i(0, 90, 0)),
+	BEND_DOWN_WEST_NORTH(DOWN, Connections.WEST_NORTH,			new Vec3i(0, 0, 0)),
 	
-	BEND_UP_NORTH_EAST(UP, Connections.NORTH_EAST),
-	BEND_UP_EAST_SOUTH(UP, Connections.EAST_SOUTH),
-	BEND_UP_SOUTH_WEST(UP, Connections.SOUTH_WEST),
-	BEND_UP_WEST_NORTH(UP, Connections.WEST_NORTH),
+	BEND_UP_NORTH_EAST(UP, Connections.NORTH_EAST,				new Vec3i(180, 180, 0)),
+	BEND_UP_EAST_SOUTH(UP, Connections.EAST_SOUTH,				new Vec3i(180, 90, 0)),
+	BEND_UP_SOUTH_WEST(UP, Connections.SOUTH_WEST,				new Vec3i(180, 0, 0)),
+	BEND_UP_WEST_NORTH(UP, Connections.WEST_NORTH,				new Vec3i(180, 270, 0)),
 	
-	BEND_NORTH_DOWN_EAST(NORTH, Connections.DOWN_EAST),
-	BEND_NORTH_EAST_UP(NORTH, Connections.UP_EAST),
-	BEND_NORTH_UP_WEST(NORTH, Connections.UP_WEST),
-	BEND_NORTH_WEST_DOWN(NORTH, Connections.DOWN_WEST),
+	BEND_NORTH_DOWN_EAST(NORTH, Connections.DOWN_EAST,			new Vec3i(90, 0, 180)),
+	BEND_NORTH_EAST_UP(NORTH, Connections.UP_EAST,				new Vec3i(90, 0, 270)),
+	BEND_NORTH_UP_WEST(NORTH, Connections.UP_WEST,				new Vec3i(90, 0, 0)),
+	BEND_NORTH_WEST_DOWN(NORTH, Connections.DOWN_WEST,			new Vec3i(90, 0, 90)),
 	
-	BEND_EAST_DOWN_SOUTH(EAST, Connections.DOWN_SOUTH),
-	BEND_EAST_SOUTH_UP(EAST, Connections.UP_SOUTH),
-	BEND_EAST_UP_NORTH(EAST, Connections.UP_NORTH),
-	BEND_EAST_NORTH_DOWN(EAST, Connections.DOWN_NORTH),
+	BEND_EAST_DOWN_SOUTH(EAST, Connections.DOWN_SOUTH,			new Vec3i(270, 90, 0)),
+	BEND_EAST_SOUTH_UP(EAST, Connections.UP_SOUTH,				new Vec3i(270, 90, 270)),
+	BEND_EAST_UP_NORTH(EAST, Connections.UP_NORTH,				new Vec3i(270, 90, 180)),
+	BEND_EAST_NORTH_DOWN(EAST, Connections.DOWN_NORTH,			new Vec3i(270, 90, 90)),
 	
-	BEND_SOUTH_DOWN_WEST(SOUTH, Connections.DOWN_WEST),
-	BEND_SOUTH_WEST_UP(SOUTH, Connections.UP_WEST),
-	BEND_SOUTH_UP_EAST(SOUTH, Connections.UP_EAST),
-	BEND_SOUTH_EAST_DOWN(SOUTH, Connections.DOWN_EAST),
+	BEND_SOUTH_DOWN_WEST(SOUTH, Connections.DOWN_WEST,			new Vec3i(270, 0, 0)),
+	BEND_SOUTH_WEST_UP(SOUTH, Connections.UP_WEST,				new Vec3i(270, 0, 270)),
+	BEND_SOUTH_UP_EAST(SOUTH, Connections.UP_EAST,				new Vec3i(270, 0, 180)),
+	BEND_SOUTH_EAST_DOWN(SOUTH, Connections.DOWN_EAST,			new Vec3i(270, 0, 90)),
 	
-	BEND_WEST_DOWN_NORTH(WEST, Connections.DOWN_NORTH),
-	BEND_WEST_NORTH_UP(WEST, Connections.UP_NORTH),
-	BEND_WEST_UP_SOUTH(WEST, Connections.UP_SOUTH),
-	BEND_WEST_SOUTH_DOWN(WEST, Connections.DOWN_SOUTH),
+	BEND_WEST_DOWN_NORTH(WEST, Connections.DOWN_NORTH,			new Vec3i(270, 270, 0)),
+	BEND_WEST_NORTH_UP(WEST, Connections.UP_NORTH,				new Vec3i(270, 270, 270)),
+	BEND_WEST_UP_SOUTH(WEST, Connections.UP_SOUTH,				new Vec3i(270, 270, 180)),
+	BEND_WEST_SOUTH_DOWN(WEST, Connections.DOWN_SOUTH,			new Vec3i(270, 270, 90)),
 	
 	// Inside Edges (FACING_SIDE_FROM_TO)
-	EDGE_INSIDE_DOWN_NORTH_UP_SOUTH	(DOWN, Connections.UP_SOUTH),
-	EDGE_INSIDE_DOWN_EAST_UP_WEST	(DOWN, Connections.UP_WEST),
-	EDGE_INSIDE_DOWN_SOUTH_UP_NORTH	(DOWN, Connections.UP_NORTH),
-	EDGE_INSIDE_DOWN_WEST_UP_EAST	(DOWN, Connections.UP_EAST),
-	EDGE_INSIDE_UP_NORTH_DOWN_SOUTH	(UP, Connections.DOWN_SOUTH),
-	EDGE_INSIDE_UP_EAST_DOWN_WEST	(UP, Connections.DOWN_WEST),
-	EDGE_INSIDE_UP_SOUTH_DOWN_NORTH	(UP, Connections.DOWN_NORTH),
-	EDGE_INSIDE_UP_WEST_DOWN_EAST	(UP, Connections.DOWN_EAST),
+	EDGE_INSIDE_DOWN_NORTH_UP_SOUTH	(DOWN, Connections.UP_SOUTH,new Vec3i(0, 180, 0)),
+	EDGE_INSIDE_DOWN_EAST_UP_WEST	(DOWN, Connections.UP_WEST,	new Vec3i(0, 90, 0)),
+	EDGE_INSIDE_DOWN_SOUTH_UP_NORTH	(DOWN, Connections.UP_NORTH,new Vec3i(0, 0, 0)),
+	EDGE_INSIDE_DOWN_WEST_UP_EAST	(DOWN, Connections.UP_EAST,	new Vec3i(0, 270, 0)),
+	EDGE_INSIDE_UP_NORTH_DOWN_SOUTH	(UP, Connections.DOWN_SOUTH,new Vec3i(180, 0, 0)),
+	EDGE_INSIDE_UP_EAST_DOWN_WEST	(UP, Connections.DOWN_WEST,	new Vec3i(180, 270, 0)),
+	EDGE_INSIDE_UP_SOUTH_DOWN_NORTH	(UP, Connections.DOWN_NORTH,new Vec3i(180, 180, 0)),
+	EDGE_INSIDE_UP_WEST_DOWN_EAST	(UP, Connections.DOWN_EAST,	new Vec3i(180, 90, 0)),
 	
 	// Outside Edges (FACING_SIDE_FROM_TO)
-	EDGE_OUTSIDE_DOWN_NORTH_UP_SOUTH(DOWN, Connections.UP_SOUTH),
-	EDGE_OUTSIDE_DOWN_EAST_UP_WEST	(DOWN, Connections.UP_WEST),
-	EDGE_OUTSIDE_DOWN_SOUTH_UP_NORTH(DOWN, Connections.UP_NORTH),
-	EDGE_OUTSIDE_DOWN_WEST_UP_EAST	(DOWN, Connections.UP_EAST),
-	EDGE_OUTSIDE_UP_NORTH_DOWN_SOUTH(UP, Connections.DOWN_SOUTH),
-	EDGE_OUTSIDE_UP_EAST_DOWN_WEST	(UP, Connections.DOWN_WEST),
-	EDGE_OUTSIDE_UP_SOUTH_DOWN_NORTH(UP, Connections.DOWN_NORTH),
-	EDGE_OUTSIDE_UP_WEST_DOWN_EAST	(UP, Connections.DOWN_EAST),
+	EDGE_OUTSIDE_DOWN_NORTH_UP_SOUTH(DOWN, Connections.UP_SOUTH,new Vec3i(0, 0, 0)),
+	EDGE_OUTSIDE_DOWN_EAST_UP_WEST	(DOWN, Connections.UP_WEST,	new Vec3i(0, 270, 0)),
+	EDGE_OUTSIDE_DOWN_SOUTH_UP_NORTH(DOWN, Connections.UP_NORTH,new Vec3i(0, 180, 0)),
+	EDGE_OUTSIDE_DOWN_WEST_UP_EAST	(DOWN, Connections.UP_EAST,	new Vec3i(0, 90, 0)),
+	EDGE_OUTSIDE_UP_NORTH_DOWN_SOUTH(UP, Connections.DOWN_SOUTH,new Vec3i(270, 180, 0)),
+	EDGE_OUTSIDE_UP_EAST_DOWN_WEST	(UP, Connections.DOWN_WEST,	new Vec3i(270, 90, 0)),
+	EDGE_OUTSIDE_UP_SOUTH_DOWN_NORTH(UP, Connections.DOWN_NORTH,new Vec3i(270, 0, 0)),
+	EDGE_OUTSIDE_UP_WEST_DOWN_EAST	(UP, Connections.DOWN_EAST,	new Vec3i(270, 270, 0)),
 	;
 	// @formatter:on
 	
 	private final String serialname;
 	public final Direction facing;
 	public final Connections connections;
+	private final Consumer<PoseStack> rotations;
 	private EnumBusbarShape(Direction facing, Connections cons){
 		this.serialname = name().toLowerCase();
 		this.facing = facing;
 		this.connections = cons;
+		this.rotations = prepareRotations(null);
 	}
-	
-	private EnumBusbarShape(String name, Direction facing, Connections cons){
-		this.serialname = name;
+	/**
+	 * @param facing        - Effectively which side of the Block it attaches to.<br>
+	 *                      (<code>North</code> meaning it attaches to the <code>South-Face</code>)
+	 * @param cons          - Possible connection-sides
+	 * @param modelRotation - How much to rotate by each axis. (Rotation order: YZX)
+	 */
+	private EnumBusbarShape(Direction facing, Connections cons, Vec3i modelRotation){
+		this.serialname = name().toLowerCase();
 		this.facing = facing;
 		this.connections = cons;
+		this.rotations = prepareRotations(modelRotation);
+	}
+	
+	private static final BiConsumer<PoseStack, Quaternion> mulPose = (p, q) -> p.mulPose(q);
+	private Consumer<PoseStack> prepareRotations(Vec3i modelRotation){
+		final Consumer<PoseStack> doNothing = p -> {};
+		
+		if(modelRotation == null || (modelRotation != null && modelRotation.equals(Vec3i.ZERO)))
+			return doNothing;
+		
+		final Quaternion qX = new Quaternion(Vector3f.XP, modelRotation.getX(), true);
+		final Quaternion qY = new Quaternion(Vector3f.YP, modelRotation.getY(), true);
+		final Quaternion qZ = new Quaternion(Vector3f.ZP, modelRotation.getZ(), true);
+		
+		final Consumer<PoseStack> x = modelRotation.getX() != 0 ? p -> mulPose.accept(p, qX) : doNothing;
+		final Consumer<PoseStack> y = modelRotation.getY() != 0 ? p -> mulPose.accept(p, qY) : doNothing;
+		final Consumer<PoseStack> z = modelRotation.getZ() != 0 ? p -> mulPose.accept(p, qZ) : doNothing;
+		
+		Objects.requireNonNull(x, String.format("Consumer for X is Null! (%s)", this));
+		Objects.requireNonNull(y, String.format("Consumer for Y is Null! (%s)", this));
+		Objects.requireNonNull(z, String.format("Consumer for Z is Null! (%s)", this));
+		
+		return(matrix -> {
+			y.accept(matrix);
+			z.accept(matrix);
+			x.accept(matrix);
+		});
+	}
+	
+	@OnlyIn(Dist.CLIENT)
+	public void applyModelRotation(PoseStack matrix){
+		this.rotations.accept(matrix);
 	}
 	
 	public boolean hasFreeConnectionPoint(Level level, BlockPos pos){
@@ -382,9 +428,10 @@ public enum EnumBusbarShape implements StringRepresentable{
 		)
 		;
 		// @formatter:on
-		public static final Set<EnumBusbarShape> STRAIGHT_SEGMENTS;
-		public static final Set<EnumBusbarShape> BEND_SEGMENTS;
-		public static final Set<EnumBusbarShape> EDGE_SEGMENTS;
+		public static final Set<EnumBusbarShape> SEGMENTS_STRAIGHT;
+		public static final Set<EnumBusbarShape> SEGMENTS_BEND;
+		public static final Set<EnumBusbarShape> SEGMENTS_EDGE_IN;
+		public static final Set<EnumBusbarShape> SEGMENTS_EDGE_OUT;
 		static{
 			{
 				HashSet<EnumBusbarShape> list = new HashSet<>();
@@ -394,7 +441,7 @@ public enum EnumBusbarShape implements StringRepresentable{
 				list.addAll(Arrays.asList(STRAIGHT_INSULATORS_WALL_NORMAL.shapes));
 				list.addAll(Arrays.asList(STRAIGHT_INSULATORS_WALL_ROTATED.shapes));
 				
-				STRAIGHT_SEGMENTS = Collections.unmodifiableSet(list);
+				SEGMENTS_STRAIGHT = Collections.unmodifiableSet(list);
 			}
 			{
 				HashSet<EnumBusbarShape> list = new HashSet<>();
@@ -403,17 +450,23 @@ public enum EnumBusbarShape implements StringRepresentable{
 				list.addAll(Arrays.asList(BENDS_CEILING.shapes));
 				list.addAll(Arrays.asList(BENDS_WALLS.shapes));
 				
-				BEND_SEGMENTS = Collections.unmodifiableSet(list);
+				SEGMENTS_BEND = Collections.unmodifiableSet(list);
 			}
 			{
 				HashSet<EnumBusbarShape> list = new HashSet<>();
-
+				
 				list.addAll(Arrays.asList(EDGE_INSIDE_FLOOR.shapes));
 				list.addAll(Arrays.asList(EDGE_INSIDE_CEILING.shapes));
+				
+				SEGMENTS_EDGE_IN = Collections.unmodifiableSet(list);
+			}
+			{
+				HashSet<EnumBusbarShape> list = new HashSet<>();
+				
 				list.addAll(Arrays.asList(EDGE_OUTSIDE_FLOOR.shapes));
 				list.addAll(Arrays.asList(EDGE_OUTSIDE_CEILING.shapes));
 				
-				EDGE_SEGMENTS = Collections.unmodifiableSet(list);
+				SEGMENTS_EDGE_OUT = Collections.unmodifiableSet(list);
 			}
 		}
 		

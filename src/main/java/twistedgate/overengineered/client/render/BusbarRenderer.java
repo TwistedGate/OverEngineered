@@ -13,8 +13,6 @@ import javax.annotation.Nullable;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.PoseStack.Pose;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -28,8 +26,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.ForgeModelBakery;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.data.IModelData;
+import twistedgate.overengineered.common.blocks.busbar.BusbarBlock;
 import twistedgate.overengineered.common.blocks.tileentity.BusbarTileEntity;
 import twistedgate.overengineered.utils.ResourceUtils;
+import twistedgate.overengineered.utils.enums.EnumBusbarShape;
 
 public class BusbarRenderer implements BlockEntityRenderer<BusbarTileEntity>{
 	static final ResourceLocation MODEL_BUSBAR_STRAIGHT = ResourceUtils.oe("block/busbar/json/busbar_straight");
@@ -64,15 +64,21 @@ public class BusbarRenderer implements BlockEntityRenderer<BusbarTileEntity>{
 	
 	@Override
 	public void render(BusbarTileEntity blockEntity, float partialTick, PoseStack matrix, MultiBufferSource buffer, int light, int overlay){
+		final BlockState state = blockEntity.getBlockState();
+		final EnumBusbarShape shape = state.getValue(BusbarBlock.SHAPE);
+		
+		// TODO Relay connections
+		
 		matrix.pushPose();
 		{
 			matrix.translate(0.5, 0.5, 0.5);
 			
-			// TODO EnumBusbarShape dependant Rotation
+			shape.applyModelRotation(matrix);
 			
-			matrix.mulPose(new Quaternion(Vector3f.YP, 0.0F, true));
-			
-			renderModel(MODEL_BUSBAR_STRAIGHT, matrix, buffer, light, overlay);
+			if(EnumBusbarShape.Type.SEGMENTS_STRAIGHT.contains(shape))	renderModel(MODEL_BUSBAR_STRAIGHT, matrix, buffer, light, overlay);
+			if(EnumBusbarShape.Type.SEGMENTS_BEND.contains(shape))		renderModel(MODEL_BUSBAR_BEND, matrix, buffer, light, overlay);
+			if(EnumBusbarShape.Type.SEGMENTS_EDGE_IN.contains(shape))	renderModel(MODEL_BUSBAR_EDGE_IN, matrix, buffer, light, overlay);
+			if(EnumBusbarShape.Type.SEGMENTS_EDGE_OUT.contains(shape))	renderModel(MODEL_BUSBAR_EDGE_OUT, matrix, buffer, light, overlay);
 		}
 		matrix.popPose();
 	}
@@ -119,10 +125,10 @@ public class BusbarRenderer implements BlockEntityRenderer<BusbarTileEntity>{
 		private static List<BakedQuad> get(ResourceLocation modelRL){
 			rand.setSeed(42L);
 			
-			ArrayList<BakedQuad> quads = new ArrayList<>(get(MODEL_BUSBAR_STRAIGHT, null, null, rand, EmptyModelData.INSTANCE));
+			ArrayList<BakedQuad> quads = new ArrayList<>(get(modelRL, null, null, rand, EmptyModelData.INSTANCE));
 			for(Direction side:Direction.values()){
 				// For some reason not all faces are returned, this gets the rest of them
-				quads.addAll(get(MODEL_BUSBAR_STRAIGHT, null, side, rand, EmptyModelData.INSTANCE));
+				quads.addAll(get(modelRL, null, side, rand, EmptyModelData.INSTANCE));
 			}
 			quads.trimToSize();
 			return quads;
